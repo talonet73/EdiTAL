@@ -97,12 +97,15 @@ export const MediaLibraryPanel: React.FC<MediaLibraryPanelProps> = ({
           disabled={importing}
           onClick={() => fileInputRef.current?.click()}
           title="Importa file multimediale nello stage"
-          className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0d9488] hover:bg-[#0f766e] text-white rounded text-xs font-semibold shadow-sm transition-colors shrink-0 cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white rounded-lg text-xs font-semibold shadow-md transition-all shrink-0 cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Import</span>
         </button>
-        <button type="button" aria-label="Importa da YouTube" title="Importa da YouTube" onClick={() => setYoutubeOpen(true)} className="p-1.5 rounded bg-red-950 text-red-400 hover:bg-red-900"><Youtube className="w-5 h-5" /></button>
+        <button type="button" aria-label="Importa da YouTube" title="Importa da YouTube: incolla un link e scarica il video nello stage" onClick={() => setYoutubeOpen(true)} className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-red-700 to-rose-600 hover:from-red-600 hover:to-rose-500 text-white rounded-lg text-xs font-semibold shadow-md shadow-red-500/20 transition-all">
+          <Youtube className="w-4 h-4" />
+          <span>YouTube</span>
+        </button>
         <input
           ref={fileInputRef}
           type="file"

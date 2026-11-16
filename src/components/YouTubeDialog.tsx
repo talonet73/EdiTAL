@@ -40,19 +40,21 @@ export function YouTubeDialog({ onClose, onImported }: { onClose: () => void; on
     } catch (error) { if (mounted.current) setError((error as Error).message); }
     finally { if (mounted.current) setBusy(false); }
   }
-  return <div className="fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="youtube-title">
-    <DraggableWindow as="form" onSubmit={download} className="bg-[#101827] border border-slate-600 rounded-xl p-6 w-full max-w-lg space-y-4 text-sm">
-      <div data-window-handle className="flex items-center justify-between"><h2 id="youtube-title" className="font-bold flex items-center gap-2"><Youtube className="text-red-500" /> Importa da YouTube</h2><button type="button" aria-label="Chiudi YouTube" onClick={onClose} disabled={busy || localBusy}><X /></button></div>
-      <p className="text-slate-300">Scarica la migliore qualità video e audio disponibile su YouTube, senza ricompressione. Al termine il file viene aggiunto automaticamente allo stage.</p>
-      <label className="block">Link del video<input autoFocus type="url" required value={url} onChange={e => setUrl(e.target.value)} disabled={busy || localBusy} placeholder="https://youtu.be/..." className="mt-2 w-full rounded bg-slate-900 border border-slate-600 px-3 py-2" /></label>
-      {busy && <div role="status"><progress max="100" value={progress} className="w-full" />{progress > 0 ? `${progress.toFixed(0)}% — download e unione audio/video…` : 'Connessione a YouTube…'}</div>}
-      {error && <p role="alert" className="text-rose-300">{error}</p>}
+  return <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="youtube-title">
+    <DraggableWindow as="form" onSubmit={download} className="bg-slate-900/95 backdrop-blur-xl border border-red-500/40 rounded-2xl p-6 w-full max-w-lg space-y-4 text-sm shadow-2xl shadow-red-500/20">
+      <div data-window-handle className="flex items-center justify-between border-b border-red-500/20 pb-3"><h2 id="youtube-title" className="font-bold flex items-center gap-2 text-red-300"><Youtube className="text-red-500" /> Importa da YouTube</h2><button type="button" aria-label="Chiudi YouTube" onClick={onClose} disabled={busy || localBusy} className="hover:bg-rose-500/20 rounded-full p-1"><X /></button></div>
+      <p className="text-slate-300">Incolla un link YouTube. L’app scarica il video (migliore qualità disponibile) e lo aggiunge automaticamente allo stage.</p>
+      <label className="block font-medium text-slate-200">Link del video
+        <input autoFocus type="url" required value={url} onChange={e => setUrl(e.target.value)} disabled={busy || localBusy} placeholder="https://youtu.be/… o https://www.youtube.com/watch?v=…" className="mt-2 w-full rounded-lg bg-slate-800 border border-slate-600 px-3 py-2.5 focus:outline-none focus:border-red-500" />
+      </label>
+      {busy && <div role="status" className="bg-slate-800/60 p-3 rounded-lg"><progress max="100" value={progress} className="w-full accent-red-500" /><div className="text-xs text-slate-400 mt-1">{progress > 0 ? `${progress.toFixed(0)}% — download e unione audio/video…` : 'Connessione a YouTube…'}</div></div>}
+      {error && <p role="alert" className="text-rose-300 bg-rose-950/40 p-2 rounded">{error}</p>}
       <div className="border-t border-slate-700 pt-3 space-y-2">
-        <p className="text-slate-300">Se YouTube non è raggiungibile, puoi importare un video già presente sul tuo dispositivo.</p>
+        <p className="text-slate-400 text-xs">Se YouTube non è raggiungibile (proxy o anti-bot), puoi importare un video già presente sul tuo dispositivo.</p>
         <input ref={localFile} type="file" aria-label="File video locale" accept="video/*,.mkv,.mov,.avi" className="hidden" onChange={importLocal} />
-        <button type="button" onClick={() => localFile.current?.click()} disabled={busy || localBusy} className="w-full bg-slate-700 hover:bg-slate-600 disabled:opacity-50 rounded py-2 font-bold">{localBusy ? 'Caricamento locale…' : 'Carica video locale'}</button>
+        <button type="button" onClick={() => localFile.current?.click()} disabled={busy || localBusy} className="w-full bg-slate-700 hover:bg-slate-600 disabled:opacity-50 rounded-lg py-2 font-bold">{localBusy ? 'Caricamento locale…' : 'Carica video locale'}</button>
       </div>
-      <button disabled={busy || localBusy} className="w-full bg-red-600 hover:bg-red-500 disabled:opacity-50 rounded py-2 font-bold">{busy ? 'Download in corso…' : 'Scarica e importa nello stage'}</button>
+      <button disabled={busy || localBusy} className="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 disabled:opacity-50 rounded-xl py-3 font-bold shadow-lg shadow-red-500/30 transition-all">{busy ? 'Download in corso…' : 'Scarica e importa nello stage'}</button>
     </DraggableWindow>
   </div>;
 }
