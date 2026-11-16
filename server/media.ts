@@ -43,9 +43,20 @@ export async function describeMedia(file: string, name: string):Promise<MediaAss
   if (!video && !audio) throw new InputError('Il file non contiene audio o video leggibile.');
   const durationSec = image ? 8 : Number(info.format.duration || video?.duration || audio?.duration);
   if (!Number.isFinite(durationSec) || durationSec <= 0) throw new InputError('Durata del file non valida.');
+  let thumbnailUrl: string | undefined;
+  if (image) thumbnailUrl = `/media_downloads/${path.basename(file)}`;
+  else if (video) {
+    const thumbName = path.basename(file, path.extname(file)) + '.thumb.jpg';
+    const thumbPath = path.join(downloadsDir, thumbName);
+    try {
+      const seek = Math.min(1, Math.max(0, durationSec * 0.1));
+      await run('ffmpeg', ['-y', '-ss', String(seek), '-i', file, '-frames:v', '1', '-q:v', '4', '-vf', 'scale=320:-1', thumbPath]);
+      thumbnailUrl = `/media_downloads/${thumbName}`;
+    } catch { /* thumbnail optional */ }
+  }
   return { id: randomUUID(), name, type: image ? 'image' : video ? 'video' : 'audio', durationSec,
     duration: `${String(Math.floor(durationSec / 60)).padStart(2, '0')}:${String(Math.floor(durationSec % 60)).padStart(2, '0')}`,
-    fileUrl: `/media_downloads/${path.basename(file)}`, thumbnailUrl: image ? `/media_downloads/${path.basename(file)}` : undefined,
+    fileUrl: `/media_downloads/${path.basename(file)}`, thumbnailUrl,
     hasAudio: Boolean(audio), width: video?.width, height: video?.height, isLost: false };
 }
 export function activeClips(clips: TimelineClip[], tracks: Track[] = []) {

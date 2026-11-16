@@ -882,12 +882,16 @@ export const Timeline: React.FC<TimelineProps> = ({
                                 clip,
                               });
                             }}
-                            className={`group absolute top-1 bottom-1 rounded bg-[#2563eb] text-white p-1.5 cursor-pointer select-none flex flex-col justify-between overflow-visible shadow-md transition-all ${
+                            className={`group absolute top-1 bottom-1 rounded bg-[#2563eb] text-white p-1.5 cursor-pointer select-none flex flex-col justify-between overflow-hidden shadow-md transition-all ${
                               isSelected
                                 ? 'ring-2 ring-cyan-300 ring-offset-2 ring-offset-[#111d2e] shadow-[0_0_15px_rgba(6,182,212,0.85)] z-30'
                                 : 'hover:brightness-110'
                             }`}
                           >
+                            {clip.mediaThumbnail && (
+                              <img src={clip.mediaThumbnail} alt="" className="absolute inset-0 w-full h-full object-cover opacity-70 pointer-events-none" />
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
                             {isSelected && (
                               <span className="absolute -top-2.5 right-1 bg-cyan-400 text-black font-extrabold text-[8px] px-1 py-0.2 rounded shadow pointer-events-none tracking-wider z-40">
                                 SELEZIONATO
