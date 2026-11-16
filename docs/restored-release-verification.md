@@ -1,4 +1,4 @@
-# Recupero della versione completa TALedit
+# Recupero della versione completa EdiTAL
 
 La base applicativa è `0796d05c4887cd4ec3726bbde6a24f240a6baf4a`, ultimo commit del
 ramo `codex/taledit-export-mcp-whisper` al momento del recupero del 13 novembre 2026.
@@ -31,9 +31,9 @@ sulla presenza del logo e di tutti i gruppi di comandi del riferimento.
 
 ## Dati personali
 
-Il pacchetto completo mantiene i dati in `%LOCALAPPDATA%\TALEDIT\data`.
+Il pacchetto completo mantiene i dati in `%LOCALAPPDATA%\EDITAL\data`.
 Chi ha usato la precedente distribuzione Electron incompleta può trovare i media
-in `%APPDATA%\TALedit\media_downloads`: conservarli e copiarli nella cartella dati
+in `%APPDATA%\EdiTAL\media_downloads`: conservarli e copiarli nella cartella dati
 completa se necessari per riaprire i progetti. Nessuna cartella personale viene
 cancellata o spostata automaticamente da questa correzione.
 

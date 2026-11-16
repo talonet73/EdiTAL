@@ -2,7 +2,7 @@
 setlocal
 cd /d "%~dp0"
 echo.
-echo Preparazione di TALEDIT per Windows
+echo Preparazione di EDITAL per Windows
 echo Verranno installati strumenti gratuiti dalle fonti di Windows.
 echo Se Windows chiede il permesso, scegli Si per continuare.
 echo.
@@ -23,7 +23,7 @@ for %%P in (OpenJS.NodeJS.LTS Python.Python.3.12 Gyan.FFmpeg Microsoft.VCRedist.
 )
 echo.
 echo Preparazione terminata.
-echo Chiudi questa finestra e fai doppio clic su 2-AVVIA-TALEDIT.cmd.
+echo Chiudi questa finestra e fai doppio clic su 2-AVVIA-EDITAL.cmd.
 echo Se viene chiesto di riavviare Windows, riavvialo prima di continuare.
 pause
 exit /b 0

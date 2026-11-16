@@ -8,5 +8,5 @@ export async function saveScreenshotToDownloads(result:{fileName:string}){
     await fs.mkdir(process.env.SCREENSHOT_DIR,{recursive:true});
     await fs.copyFile(path.join(downloadsDir,result.fileName),path.join(process.env.SCREENSHOT_DIR,path.basename(result.fileName)));
     return true;
-  }catch(error){console.error('[TALEDIT] Screenshot: cartella Download non scrivibile, uso il download del browser.');return false;}
+  }catch(error){console.error('[EDITAL] Screenshot: cartella Download non scrivibile, uso il download del browser.');return false;}
 }

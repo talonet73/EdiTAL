@@ -7,7 +7,7 @@ test.beforeEach(async({request})=>{const snapshot=await(await request.get('/api/
 for(const [channels,rate,duration,hevc] of [[2,48000,8,0],[8,48000,8,0],[2,96000,8,0],[2,192000,8,0],[1,16000,4433.7,0],[2,48000,4,8],[2,48000,4,10]])test(`converted MOV plays actual picture and sound: ${channels}ch ${rate}Hz ${duration}s HEVC=${hevc}`,async({page,request})=>{
  const previewDeadline=duration>1000?900000:240000;
  test.setTimeout(previewDeadline+60000);
- const dir=fs.mkdtempSync(path.join(os.tmpdir(),'taledit av playback ')),file=path.join(dir,`camera-${channels}-${rate}.mov`);
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'edital av playback ')),file=path.join(dir,`camera-${channels}-${rate}.mov`);
  try{
  const sound=Array(channels).fill('0.1*sin(2*PI*440*t)').join('|');
  if(hevc)execFileSync('ffmpeg',['-v','error','-y','-f','lavfi','-i','color=red:s=3840x2160:r=186213/3125:d=4','-f','lavfi','-i','aevalsrc=0.1*sin(2*PI*440*t)|0.1*sin(2*PI*440*t):s=48000:d=4','-c:v','libx265','-preset','ultrafast','-x265-params','pools=4:frame-threads=2','-pix_fmt',hevc===10?'yuv420p10le':'yuv420p','-tag:v','hvc1','-color_primaries','bt709','-color_trc','bt709','-colorspace','bt709','-color_range','tv','-c:a','aac','-shortest',file],{stdio:'pipe'});
@@ -51,7 +51,7 @@ for(const [channels,rate,duration,hevc] of [[2,48000,8,0],[8,48000,8,0],[2,96000
 });
 
 test('a browser decoder failure is visible in the Player instead of an unexplained black frame',async({page})=>{
- const dir=fs.mkdtempSync(path.join(os.tmpdir(),'taledit decoder error ')),file=path.join(dir,'Errore anteprima.mov');
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'edital decoder error ')),file=path.join(dir,'Errore anteprima.mov');
  try{
   execFileSync('ffmpeg',['-v','error','-y','-f','lavfi','-i','color=red:s=160x90:r=25:d=1','-c:v','libx264','-threads','2','-pix_fmt','yuv420p',file]);
   await page.goto('/',{waitUntil:'domcontentloaded'});await page.locator('[data-stage=true] input[type=file]').setInputFiles(file);

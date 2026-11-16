@@ -84,8 +84,8 @@ export const TopNav: React.FC<TopNavProps> = ({
       <div className="flex items-center justify-between px-3 py-1 border-b border-[#182234]">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2.5 font-bold tracking-wide text-xl text-[#00e6bc] shrink-0">
-            <img src="/taledit-logo.png" alt="Logo TALedit" width={44} height={44} className="w-11 h-11 rounded-xl object-contain" draggable={false} />
-            <span>TALedit</span>
+            <img src="/edital-logo.png" alt="Logo EdiTAL" width={44} height={44} className="w-11 h-11 rounded-xl object-contain" draggable={false} />
+            <span>EdiTAL</span>
           </div>
           <div className="flex items-center gap-1">
             {menuItems.map(menu => (
@@ -140,7 +140,7 @@ export const TopNav: React.FC<TopNavProps> = ({
                     {menu === 'Help' && (
                       <>
                         <button onClick={() => { onOpenClaudeDialog(); setActiveMenu(null); }} className="w-full text-left px-3 py-1.5 hover:bg-[#1e293b]">Guida Connessione Claude DT</button>
-                        <div className="px-3 py-1.5 text-[11px] text-gray-400 border-t border-[#1e293b]">TALEDIT v1.0.0</div>
+                        <div className="px-3 py-1.5 text-[11px] text-gray-400 border-t border-[#1e293b]">EDITAL v1.0.0</div>
                       </>
                     )}
                   </div>
@@ -154,7 +154,7 @@ export const TopNav: React.FC<TopNavProps> = ({
         <div className="flex items-center gap-3">
           <div className="text-[11px] text-gray-400 flex items-center gap-1.5">
             <span className={`w-2 h-2 rounded-full ${claudeConnected ? 'bg-emerald-400' : 'bg-gray-500'}`} />
-            <span>MCP Protocol: {claudeConnected ? 'Attivo (Port 3000)' : 'Disconnesso'}</span>
+            <span>MCP Protocol: {claudeConnected ? 'Attivo (Port 3001)' : 'Disconnesso'}</span>
           </div>
         </div>
       </div>

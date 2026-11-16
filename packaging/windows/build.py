@@ -41,11 +41,11 @@ def unpack(archive, destination, prefix=''):
             write_member(zipped, name, destination / relative)
 
 def compile_installer(makensis, payload, out, version):
-    installer = out / 'TALEDIT-Setup.exe'
-    definitions = {'OUTPUT': installer, 'PAYLOAD': payload, 'VERSION': version, 'ICON': ROOT / 'public' / 'taledit.ico'}
+    installer = out / 'EDITAL-Setup.exe'
+    definitions = {'OUTPUT': installer, 'PAYLOAD': payload, 'VERSION': version, 'ICON': ROOT / 'public' / 'edital.ico'}
     run(makensis, *[(('/D' if os.name == 'nt' else '-D') + key + '=' + str(value)) for key, value in definitions.items()], HERE / 'installer.nsi')
     checksum = hashlib.sha256(installer.read_bytes()).hexdigest()
-    (out / 'TALEDIT-Setup.exe.sha256').write_text(checksum + '  TALEDIT-Setup.exe\n')
+    (out / 'EDITAL-Setup.exe.sha256').write_text(checksum + '  EDITAL-Setup.exe\n')
     print(f'Installer: {installer} ({installer.stat().st_size / 1024**2:.1f} MiB); SHA256 {checksum}', flush=True)
 
 
@@ -135,7 +135,7 @@ def main():
     if not (electron_dist / 'electron.exe').is_file():
         raise RuntimeError('Build desktop Windows on Windows: Electron x64 runtime missing')
     shutil.copytree(electron_dist, payload / 'runtime' / 'electron')
-    shutil.copy2(ROOT / 'public' / 'taledit.ico', payload / 'taledit.ico')
+    shutil.copy2(ROOT / 'public' / 'edital.ico', payload / 'edital.ico')
     shutil.copy2(ROOT / 'node_modules' / '@fontsource' / 'plus-jakarta-sans' / 'LICENSE', payload / 'licenses' / 'FONT-LICENSE.txt')
     models = payload / 'models'
     models.mkdir()
@@ -154,8 +154,8 @@ def main():
     (payload / 'VERSION.txt').write_text(version + '\n')
     shutil.copy2(HERE / 'THIRD-PARTY.md', payload / 'licenses' / 'THIRD-PARTY.md')
     shutil.copy2(HERE / 'assets.lock.json', payload / 'licenses' / 'assets.lock.json')
-    for name, action in [('TALEDIT.exe', ''), ('CHIUDI-TALEDIT.exe', '--stop')]:
-        defines = [f'/DOUTPUT={payload / name}', f'/DACTION={action}', f'/DICON={ROOT / "public" / "taledit.ico"}'] if os.name == 'nt' else [f'-DOUTPUT={payload / name}', f'-DACTION={action}', f'-DICON={ROOT / "public" / "taledit.ico"}']
+    for name, action in [('EDITAL.exe', ''), ('CHIUDI-EDITAL.exe', '--stop')]:
+        defines = [f'/DOUTPUT={payload / name}', f'/DACTION={action}', f'/DICON={ROOT / "public" / "edital.ico"}'] if os.name == 'nt' else [f'-DOUTPUT={payload / name}', f'-DACTION={action}', f'-DICON={ROOT / "public" / "edital.ico"}']
         run(args.makensis, *defines, HERE / 'launcher.nsi')
     # Inventory includes every runtime dependency, AI model and application resource.
     inventory = {p.relative_to(payload).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(payload.rglob('*')) if p.is_file()}

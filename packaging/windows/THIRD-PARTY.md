@@ -1,4 +1,4 @@
-TALEDIT offline Windows distribution
+EDITAL offline Windows distribution
 
 The installer bundles unmodified third-party runtimes and model data. Python wheel
 metadata/licenses and runtime licenses are retained in the installed directories.

@@ -54,7 +54,7 @@ export function gradeLut(raw:ColorGrade){
   for(let b=0;b<LUT_SIZE;b++)for(let g=0;g<LUT_SIZE;g++)for(let r=0;r<LUT_SIZE;r++)for(const v of transform(r/32,g/32,b/32))lut[n++]=v;
   if(cache.size>=6)cache.delete(cache.keys().next().value!);cache.set(key,lut);return lut;
 }
-export function gradeCube(raw:ColorGrade){const lut=gradeLut(raw),lines=['TITLE "TALEDIT SDR"',`LUT_3D_SIZE ${LUT_SIZE}`,'DOMAIN_MIN 0 0 0','DOMAIN_MAX 1 1 1'];for(let i=0;i<lut.length;i+=3)lines.push(`${lut[i].toFixed(7)} ${lut[i+1].toFixed(7)} ${lut[i+2].toFixed(7)}`);return lines.join('\n');}
+export function gradeCube(raw:ColorGrade){const lut=gradeLut(raw),lines=['TITLE "EDITAL SDR"',`LUT_3D_SIZE ${LUT_SIZE}`,'DOMAIN_MIN 0 0 0','DOMAIN_MAX 1 1 1'];for(let i=0;i<lut.length;i+=3)lines.push(`${lut[i].toFixed(7)} ${lut[i+1].toFixed(7)} ${lut[i+2].toFixed(7)}`);return lines.join('\n');}
 /** Same trilinear interpolation as FFmpeg lut3d. Alpha is left untouched. */
 export function applyGrade(data:Uint8ClampedArray,raw?:ColorGrade){
   if(!hasGrade(raw))return;const lut=gradeLut(raw!),n=LUT_SIZE;

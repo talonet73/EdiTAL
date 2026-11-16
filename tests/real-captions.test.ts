@@ -8,7 +8,7 @@ import { promisify } from 'node:util';
 const exec = promisify(execFile);
 
 test('real Whisper API preserves source trims, timeline delay and chronological timestamps', { timeout: 180000 }, async () => {
-  const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'taledit-captions-real-'));
+  const folder = await fs.mkdtemp(path.join(os.tmpdir(), 'edital-captions-real-'));
   process.env.MEDIA_DIR = folder;
   const { createApp } = await import('../server');
   const app = await createApp(true);

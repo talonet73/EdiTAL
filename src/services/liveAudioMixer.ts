@@ -12,7 +12,7 @@ class Bus {
       if((type==='highpass'&&s.highpass===20)||(type==='lowpass'&&s.lowpass===20000)||(['lowshelf','peaking','highshelf'].includes(type)&&gain===0))continue;
       const f=this.ctx.createBiquadFilter();f.type=type;f.frequency.value=freq;f.gain.value=gain;f.Q.value=q;add(f);
     }
-    if((s.noise||s.compression)&&gateReady){const gate=new AudioWorkletNode(this.ctx,'taledit-gate',{numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[2],parameterData:{amount:s.noise,compression:s.compression,threshold:s.threshold,ratio:s.ratio,attack:s.attack,release:s.release}});add(gate);}
+    if((s.noise||s.compression)&&gateReady){const gate=new AudioWorkletNode(this.ctx,'edital-gate',{numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[2],parameterData:{amount:s.noise,compression:s.compression,threshold:s.threshold,ratio:s.ratio,attack:s.attack,release:s.release}});add(gate);}
     if(s.width!==100 || s.pan){
       const splitter=this.ctx.createChannelSplitter(2),merger=this.ctx.createChannelMerger(2);tail.connect(splitter);this.nodes.push(splitter,merger);
       const w=s.width/100,angle=(s.pan+100)/200*Math.PI/2,pan=[Math.cos(angle)*Math.SQRT2,Math.sin(angle)*Math.SQRT2];

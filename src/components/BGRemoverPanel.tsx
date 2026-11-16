@@ -25,7 +25,7 @@ export function BGRemoverPanel({open,selected,onClose,onComplete}:{open:boolean;
     <div className="p-4 space-y-4"><p>Rimuovi lo sfondo e conserva il soggetto principale, dando priorità a quello centrale. Il riconoscimento automatico può richiedere una scena più chiara.</p>
       <p className="text-xs text-slate-400">Gratuito con rembg, sul tuo computer. Le immagini diventano PNG trasparenti; i video WebM con trasparenza, mantenendo l’audio. L’elaborazione dei video può richiedere tempo.</p>
       <p>{visual?`Clip: ${selected.name}`:'Seleziona un video o un’immagine nella timeline.'}</p>
-      {ready===false && <p role="status">BG Remover non è pronto. Chiudi e riapri con 2-AVVIA-TALEDIT per prepararlo.</p>}
+      {ready===false && <p role="status">BG Remover non è pronto. Chiudi e riapri con 2-AVVIA-EDITAL per prepararlo.</p>}
       {running && <div role="status"><p>Elaborazione: {job.progress}%</p><progress aria-label="Avanzamento rimozione sfondo" max="100" value={job.progress} className="w-full"/><p className="text-xs">Puoi chiudere il pannello: l’elaborazione continua.</p></div>}
       {error && <p role="alert" className="text-red-300 whitespace-pre-wrap">{error}</p>}
       {job?.status==='complete' && <p role="status" className="text-green-300">Sfondo rimosso. Il file è nello stage; la clip originale è sostituita se ancora presente. Puoi usare Annulla per ripristinarla.</p>}

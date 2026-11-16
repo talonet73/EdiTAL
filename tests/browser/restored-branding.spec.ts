@@ -1,7 +1,7 @@
 import {test,expect} from '@playwright/test';
-test('complete reference interface and local TALedit branding remain present',async({page})=>{
+test('complete reference interface and local EdiTAL branding remain present',async({page})=>{
   await page.goto('/');
-  const logo=page.getByRole('img',{name:'Logo TALedit'});
+  const logo=page.getByRole('img',{name:'Logo EdiTAL'});
   await expect(logo).toBeVisible();
   expect(await logo.evaluate((img:HTMLImageElement)=>img.complete && img.naturalWidth>0)).toBe(true);
   for(const name of ['ChatGPT MCP','Effects','Transitions','Captions','Adjustment','BG Remover','AI Cut','Pen Mask']) {

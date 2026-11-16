@@ -2,7 +2,7 @@
 
 Ricerca sui repository ufficiali del 21 ottobre 2026. Le stelle indicano diffusione della community, non misurano da sole qualità, accuratezza o soddisfazione. I benchmark citati sono degli autori; non sono stati riprodotti su questa macchina.
 
-| Progetto / modello | Evidenza consultata | Impiego in TALEDIT |
+| Progetto / modello | Evidenza consultata | Impiego in EDITAL |
 | --- | --- | --- |
 | [OpenAI Whisper](https://github.com/openai/whisper) | Circa 111.000 stelle; modello multilingue, italiano, pesi e codice MIT | Modello di riferimento; implementazione originale più pesante per CPU |
 | [faster-whisper](https://github.com/SYSTRAN/faster-whisper) | Circa 26.000 stelle; benchmark CPU small INT8: 1.477 MB, 1m42s sul campione degli autori; integrazioni elencate con aTrain, WhisperLive, Whisper-Streaming | Scelto: esegue Whisper con CTranslate2, quantizzazione INT8 e timestamp senza API a pagamento |

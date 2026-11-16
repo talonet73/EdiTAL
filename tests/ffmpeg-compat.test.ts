@@ -7,7 +7,7 @@ import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {rippleRemove} from '../src/services/smartCut';
 const exec=promisify(execFile);
-const folder=await fs.mkdtemp(path.join(os.tmpdir(),'taledit AI Cut compat '));
+const folder=await fs.mkdtemp(path.join(os.tmpdir(),'edital AI Cut compat '));
 process.env.MEDIA_DIR=folder;
 const {createApp}=await import('../server');
 let server:any,base:string;

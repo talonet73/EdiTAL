@@ -8,7 +8,7 @@ import { randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { downloadsDir, exportMedia, InputError } from './media';
 const languages: Record<string,string> = { Italian:'it',English:'en',Spanish:'es',French:'fr',German:'de',Japanese:'ja',Auto:'' };
-const modelDir = () => process.env.WHISPER_MODEL_DIR || '/workspace/.cache/taledit/whisper-small';
+const modelDir = () => process.env.WHISPER_MODEL_DIR || '/workspace/.cache/edital/whisper-small';
 const python = () => process.env.WHISPER_PYTHON || '/workspace/.venv-whisper/bin/python';
 interface CaptionJob { id: string; status: 'running'|'complete'|'error'; subtitles?: any[]; error?: string; created: number; candidates?:import('../src/services/smartCut').CutRange[];phase?:string;warning?:string }
 const jobs = new Map<string,CaptionJob>();

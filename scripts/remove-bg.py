@@ -8,7 +8,7 @@ import signal
 from pathlib import Path
 
 os.environ.setdefault('OMP_NUM_THREADS', '2')
-os.environ['U2NET_HOME'] = os.environ.get('BG_MODEL_DIR', '/workspace/.cache/taledit/rembg')
+os.environ['U2NET_HOME'] = os.environ.get('BG_MODEL_DIR', '/workspace/.cache/edital/rembg')
 
 def main():
     from PIL import Image

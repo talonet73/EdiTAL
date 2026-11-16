@@ -2,7 +2,7 @@
 import os
 from faster_whisper import WhisperModel
 from faster_whisper.utils import download_model
-folder = os.environ.get('WHISPER_MODEL_DIR', '/workspace/.cache/taledit/whisper-small')
+folder = os.environ.get('WHISPER_MODEL_DIR', '/workspace/.cache/edital/whisper-small')
 # Set WHISPER_MODEL_REVISION to pin a particular official model revision.
 revision = os.environ.get('WHISPER_MODEL_REVISION', 'main')
 path = download_model('small', output_dir=folder, revision=revision)

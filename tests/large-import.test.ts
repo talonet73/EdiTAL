@@ -8,7 +8,7 @@ import {promisify} from 'node:util';
 import {execFile} from 'node:child_process';
 import http from 'node:http';
 const exec=promisify(execFile);
-const folder=await fs.mkdtemp(path.join(os.tmpdir(),'taledit large import '));
+const folder=await fs.mkdtemp(path.join(os.tmpdir(),'edital large import '));
 process.env.MEDIA_DIR=folder;
 const {createApp}=await import('../server');
 let server:any,base:string;

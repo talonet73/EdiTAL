@@ -1,4 +1,6 @@
-# TALEDIT
+# EdiTAL
+
+> EdiTAL nasce il 16 novembre 2026 come copia completa di [TALedit](https://github.com/talonet73/TALedit), con cronologia, nome, logo, installer e cartella dati propri. Usa la porta **3001** e la cartella `%LOCALAPPDATA%\EDITAL`, quindi può convivere sullo stesso PC con TALedit (porta 3000).
 
 Editor video locale con React, Express, FFmpeg e strumenti MCP per Claude e ChatGPT.
 
@@ -18,13 +20,13 @@ Aggiornamento 4 novembre 2026: corretta l’incompatibilità AI Cut/esportazione
 le versioni recenti di FFmpeg. Verificato anche WAV da 169,6 secondi con margine
 di 0,7 secondi. [Risultati della correzione](docs/ffmpeg-ai-cut-compatibility.md).
 
-[Scarica **TALEDIT-Setup.exe**](https://github.com/talonet73/TALEDIT/releases/latest/download/TALEDIT-Setup.exe) per Windows 10/11 a 64 bit.
+[Scarica **EDITAL-Setup.exe**](https://github.com/talonet73/EdiTAL/releases/latest/download/EDITAL-Setup.exe) per Windows 10/11 a 64 bit.
 Include Python, Node.js, strumenti video e modelli gratuiti per sottotitoli e rimozione
 sfondo: il primo avvio usa i componenti già inclusi nel pacchetto.
 
-Salva il progetto e chiudi TALEDIT e la vecchia finestra nera. Apri il file scaricato,
-poi premi **Avanti → Installa → Fine**. Le volte successive apri **TALEDIT** dal desktop.
-Per fermare anche il programma in background: **Start → TALEDIT → Chiudi TALEDIT**.
+Salva il progetto e chiudi EDITAL e la vecchia finestra nera. Apri il file scaricato,
+poi premi **Avanti → Installa → Fine**. Le volte successive apri **EDITAL** dal desktop.
+Per fermare anche il programma in background: **Start → EDITAL → Chiudi EDITAL**.
 
 Installer costruito e provato su Windows: installazione, runtime privati, trascrizione
 reale, rimozione sfondo, avvii ripetuti, importazione, esportazione, screenshot,
@@ -35,7 +37,7 @@ interfaccia e disinstallazione con conservazione dei dati. Superati anche
 
 ## Avvio dai sorgenti
 
-In alternativa all’installer, su Windows puoi usare la cartella dei sorgenti con i file `1-PREPARA-TALEDIT.cmd` e `2-AVVIA-TALEDIT.cmd`: [istruzioni](APRI-SU-WINDOWS.md). Il test Windows dell’installer usa componenti privati già inclusi; non esegue la preparazione globale tramite questi due script.
+In alternativa all’installer, su Windows puoi usare la cartella dei sorgenti con i file `1-PREPARA-EDITAL.cmd` e `2-AVVIA-EDITAL.cmd`: [istruzioni](APRI-SU-WINDOWS.md). Il test Windows dell’installer usa componenti privati già inclusi; non esegue la preparazione globale tramite questi due script.
 
 Requisiti: Node.js >=22.12, Python 3.12, FFmpeg e ffprobe nel PATH.
 
@@ -44,7 +46,7 @@ npm ci
 npm run dev
 ```
 
-Il server ascolta sulla porta 3000 (`PORT` e `HOST` configurabili). Il frontend e le API usano lo stesso server. `npm run preview` serve solo gli asset Vite: **non** è un server dell’editor completo.
+Il server ascolta sulla porta 3001 (`PORT` e `HOST` configurabili). Il frontend e le API usano lo stesso server. `npm run preview` serve solo gli asset Vite: **non** è un server dell’editor completo.
 
 Per produzione:
 
@@ -106,7 +108,7 @@ bash scripts/setup-whisper.sh
 npm run test:whisper
 ```
 
-Lo script crea `/workspace/.venv-whisper`, installa le versioni bloccate in `scripts/requirements-whisper.lock` (faster-whisper 1.2.1, **PyAV 16.1.0**, CTranslate2 4.8.3) e scarica i pesi dal repository ufficiale `Systran/faster-whisper-small` su Hugging Face in `/workspace/.cache/taledit/whisper-small`. Per installazioni fuori dal cloud imposta `WHISPER_VENV`, `WHISPER_PYTHON` e `WHISPER_MODEL_DIR` su percorsi locali scrivibili. Il modello occupa circa 500 MB. La cache Hugging Face/Xet è impostata sotto `/workspace/.cache/huggingface`, scrivibile in questo ambiente. PyAV 19.0.2 è incompatibile con l’argomento `metadata_errors` usato dal decoder di faster-whisper 1.2.1: non aggiornare questo pacchetto senza ripetere i test reali. Dopo l’installazione l’inferenza è offline; nessun download implicito avviene durante la trascrizione.
+Lo script crea `/workspace/.venv-whisper`, installa le versioni bloccate in `scripts/requirements-whisper.lock` (faster-whisper 1.2.1, **PyAV 16.1.0**, CTranslate2 4.8.3) e scarica i pesi dal repository ufficiale `Systran/faster-whisper-small` su Hugging Face in `/workspace/.cache/edital/whisper-small`. Per installazioni fuori dal cloud imposta `WHISPER_VENV`, `WHISPER_PYTHON` e `WHISPER_MODEL_DIR` su percorsi locali scrivibili. Il modello occupa circa 500 MB. La cache Hugging Face/Xet è impostata sotto `/workspace/.cache/huggingface`, scrivibile in questo ambiente. PyAV 19.0.2 è incompatibile con l’argomento `metadata_errors` usato dal decoder di faster-whisper 1.2.1: non aggiornare questo pacchetto senza ripetere i test reali. Dopo l’installazione l’inferenza è offline; nessun download implicito avviene durante la trascrizione.
 
 `GET /api/captions/status` indica se il modello è disponibile. **Trascrivi audio** trascrive il mix effettivo della timeline, inclusi offset e mute/solo. La lingua selezionata è quella parlata. L’opzione di traduzione produce l’inglese, destinazione supportata da Whisper; non promette traduzioni verso altre lingue. I segmenti sono modificabili ed esportabili. Il filtro VAD, con margine vocale di 100 ms, riduce gli anticipi dovuti al silenzio iniziale e ha superato il test senza sottotitoli inventati sul silenzio. I timestamp dei segmenti sono stime del modello, non allineamento parola per parola. L’accuratezza va verificata sui propri contenuti.
 
@@ -148,7 +150,7 @@ Controllo della barra e matrice dei pulsanti verificati: [docs/toolbar-verificat
 
 [rembg](https://github.com/danielgatis/rembg), licenza MIT, con modello U2NetP e CPU. Non è un servizio GitHub ospitato: è software gratuito eseguito localmente. Il download ufficiale del modello pesa circa 4,6 MB e mantiene il controllo di checksum del progetto. I file dell’utente non vengono inviati a servizi di segmentazione. Non sono usati modelli predefiniti con licenze commerciali diverse.
 
-Su Linux, prepara una volta con `bash scripts/setup-bg.sh`; su Windows `2-AVVIA-TALEDIT.cmd` prepara automaticamente un ambiente Python separato da Whisper. Un errore nella preparazione BG non impedisce l’avvio del resto dell’editor: il pannello indica che il modello non è pronto. Configurazioni locali: `BG_PYTHON` e `BG_MODEL_DIR`. Dipendenze bloccate in `scripts/requirements-bg.lock`; non modificano PyAV/Whisper.
+Su Linux, prepara una volta con `bash scripts/setup-bg.sh`; su Windows `2-AVVIA-EDITAL.cmd` prepara automaticamente un ambiente Python separato da Whisper. Un errore nella preparazione BG non impedisce l’avvio del resto dell’editor: il pannello indica che il modello non è pronto. Configurazioni locali: `BG_PYTHON` e `BG_MODEL_DIR`. Dipendenze bloccate in `scripts/requirements-bg.lock`; non modificano PyAV/Whisper.
 
 Il modello stima la maschera e conserva la componente rilevante vicina al centro; sui video usa anche la posizione precedente. Non identifica semanticamente una persona specifica e non garantisce bordi perfetti su capelli, trasparenze, soggetti piccoli o movimenti difficili. Le immagini diventano PNG RGBA; i video WebM VP9 con alpha a 25 fps, audio Opus e dimensioni originali (eventuale padding di un pixel per dimensioni pari). L’export MP4 compone la trasparenza sul resto del montaggio. Si elabora solo l’intervallo selezionato: l’audio collegato mantiene la sorgente originale e il suo offset anche nei tagli successivi. Puoi annullare il lavoro dal pannello; chiuderlo lascia proseguire l’elaborazione.
 
@@ -206,6 +208,6 @@ Ricerca GitHub, licenze, scelte, limiti e verifiche: [docs/github-ai-research.md
 
 ## Video generati da Claude e continuità dei tagli
 
-Dopo l’aggiornamento ricollega Claude e chiedigli **«Inserisci il video appena creato nella timeline di TALEDIT usando MCP»**. Il nuovo strumento `import_media` riceve file dal PC di TALEDIT, URL HTTPS scaricabili o byte del file; per file grandi sono disponibili i comandi di trasferimento a blocchi. L’importazione inserisce automaticamente video e audio collegato, crea le piste necessarie e porta il cursore sul nuovo media. `export_video` genera il montaggio reale e può inserirne automaticamente il risultato nella timeline. Il solo collegamento MCP non trasferisce un allegato rimasto nella chat o un percorso del sandbox remoto.
+Dopo l’aggiornamento ricollega Claude e chiedigli **«Inserisci il video appena creato nella timeline di EDITAL usando MCP»**. Il nuovo strumento `import_media` riceve file dal PC di EDITAL, URL HTTPS scaricabili o byte del file; per file grandi sono disponibili i comandi di trasferimento a blocchi. L’importazione inserisce automaticamente video e audio collegato, crea le piste necessarie e porta il cursore sul nuovo media. `export_video` genera il montaggio reale e può inserirne automaticamente il risultato nella timeline. Il solo collegamento MCP non trasferisce un allegato rimasto nella chat o un percorso del sandbox remoto.
 
 Le giunzioni dei tagli vengono riagganciate e i decoder successivi preparati in anticipo. Player ed export evitano i fotogrammi neri introdotti dal cambio clip, conservando gli spazi intenzionali del montaggio. Dettagli e verifiche: [docs/cut-continuity-mcp-verification.md](docs/cut-continuity-mcp-verification.md).

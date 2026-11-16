@@ -1,13 +1,13 @@
-name: TALEDIT Installer Windows
+name: EDITAL Installer Windows
 on:
   workflow_dispatch:
   push:
     branches: [main, codex/taledit-export-mcp-whisper]
-    paths: ['server.ts', 'server/**', 'src/**', 'public/**', 'scripts/**', 'package.json', 'package-lock.json', 'vite.config.ts', 'logo_TALedit.png', 'tests/large-import.test.ts', 'packaging/windows/**', '.github/workflows/taledit-windows.yml']
+    paths: ['server.ts', 'server/**', 'src/**', 'public/**', 'scripts/**', 'package.json', 'package-lock.json', 'vite.config.ts', 'logo_EdiTAL.png', 'tests/large-import.test.ts', 'packaging/windows/**', '.github/workflows/edital-windows.yml']
 permissions:
   contents: read
 concurrency:
-  group: taledit-windows-${{ github.ref }}
+  group: edital-windows-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   installer:
@@ -47,38 +47,38 @@ jobs:
         run: python packaging/windows/build.py --installer-only --makensis "${env:ProgramFiles(x86)}\NSIS\makensis.exe"
       - run: npx playwright install chromium chrome msedge
       - name: Test actual installer and installed application on Windows
-        run: python packaging/windows/smoke.py build/windows/TALEDIT-Setup.exe build/windows/payload.sha256.json
+        run: python packaging/windows/smoke.py build/windows/EDITAL-Setup.exe build/windows/payload.sha256.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: TALEDIT-installed-player-tests
+          name: EDITAL-installed-player-tests
           path: |
             playwright-report/
             test-results/
       - uses: actions/upload-artifact@v4
         if: ${{ always() && steps.installer_build.outcome == 'success' }}
         with:
-          name: TALEDIT-Windows-candidate
+          name: EDITAL-Windows-candidate
           path: |
-            build/windows/TALEDIT-Setup.exe
-            build/windows/TALEDIT-Setup.exe.sha256
+            build/windows/EDITAL-Setup.exe
+            build/windows/EDITAL-Setup.exe.sha256
             build/windows/payload.sha256.json
       - name: Publish only after Windows checks pass
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = "taledit-windows-$('${{ github.sha }}'.Substring(0,12))"
+          $tag = "edital-windows-$('${{ github.sha }}'.Substring(0,12))"
           @"
           Installer unico e completo per Windows 10/11 a 64 bit. Include Python, Node.js, FFmpeg, Whisper small e U2NetP; nessuna preparazione manuale.
 
           Include importazione su disco senza limite applicativo di 500 MB, formati rilevati da FFmpeg e anteprime compatibili senza alterare gli originali. Verificato MOV 4K/60fps sopra 500 MB su Windows. Include anche la correzione AI Cut per FFmpeg recente.
 
-          Scarica TALEDIT-Setup.exe, aprilo e segui Installa. L'app si apre nella propria finestra desktop Electron, con logo TALedit nell'installer, nei collegamenti e nell'interfaccia. I file personali restano separati dagli aggiornamenti.
+          Scarica EDITAL-Setup.exe, aprilo e segui Installa. L'app si apre nella propria finestra desktop Electron, con logo EdiTAL nell'installer, nei collegamenti e nell'interfaccia. I file personali restano separati dagli aggiornamenti.
 
           Build verificata su Windows: installazione, runtime inclusi, trascrizione reale e timestamp, rimozione sfondo, avvio, importazione, esportazione video/audio, screenshot PNG, interfaccia, chiusura e disinstallazione con conservazione dei dati.
 
           Sorgente app: https://github.com/${{ github.repository }}/tree/${{ github.sha }}
           Componenti, licenze e riferimenti ai sorgenti: packaging/windows/THIRD-PARTY.md nello stesso commit. Installer privo di firma digitale.
           "@ | Set-Content -Encoding utf8 build/windows/release-notes.md
-          gh release create $tag build/windows/TALEDIT-Setup.exe build/windows/TALEDIT-Setup.exe.sha256 --title "TALEDIT Windows $tag" --notes-file build/windows/release-notes.md --target '${{ github.sha }}' --latest
+          gh release create $tag build/windows/EDITAL-Setup.exe build/windows/EDITAL-Setup.exe.sha256 --title "EDITAL Windows $tag" --notes-file build/windows/release-notes.md --target '${{ github.sha }}' --latest

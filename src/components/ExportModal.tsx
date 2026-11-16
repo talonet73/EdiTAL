@@ -186,7 +186,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
 
   const handleDownloadProjectJSON = () => {
     const projectData = {
-      appName: 'TALEDIT',
+      appName: 'EDITAL',
       version: '2.1.0',captionWorkflow:'timeline',
       exportedAt: new Date().toISOString(),
       aspectRatio,currentTime,
@@ -198,7 +198,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `TALEDIT_Progetto_${Date.now()}.json`;
+    a.download = `EDITAL_Progetto_${Date.now()}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -215,7 +215,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
               {isAudioFormat ? <Music className="w-4 h-4" /> : <Film className="w-4 h-4" />}
             </div>
             <div>
-              <h3 className="font-bold text-sm text-cyan-300">Esporta TALEDIT</h3>
+              <h3 className="font-bold text-sm text-cyan-300">Esporta EDITAL</h3>
               <p className="text-[10px] text-gray-400">Codifica FFmpeg con anteprima e controllo peso file</p>
             </div>
           </div>
@@ -415,7 +415,7 @@ export const ExportModal: React.FC<ExportModalProps> = ({
                   className="w-full py-1.5 bg-[#172030] hover:bg-[#202c42] disabled:opacity-40 text-gray-300 hover:text-white rounded-xl transition-colors flex items-center justify-center gap-2 border border-[#29374e]"
                 >
                   <FileCode className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Salva Progetto TALEDIT (.json)</span>
+                  <span>Salva Progetto EDITAL (.json)</span>
                 </button>
               </div>
             </>

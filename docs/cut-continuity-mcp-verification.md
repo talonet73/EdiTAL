@@ -22,7 +22,7 @@ Ora l’elenco comprende 13 strumenti. Quelli nuovi sono:
 
 | Comando | Comportamento |
 | --- | --- |
-| `import_media` | Copia un file dal PC/server di TALEDIT, scarica un URL HTTPS pubblico, oppure riceve i byte Base64 di un file piccolo. Verifica il contenuto reale, poi aggiunge stage e timeline con audio collegato. |
+| `import_media` | Copia un file dal PC/server di EDITAL, scarica un URL HTTPS pubblico, oppure riceve i byte Base64 di un file piccolo. Verifica il contenuto reale, poi aggiunge stage e timeline con audio collegato. |
 | `begin_media_upload` | Inizia un trasferimento di file più grande, dichiarando nome e dimensione. |
 | `upload_media_chunk` | Trasferisce i byte in blocchi fino a 1 MiB; controlla ordine e dimensione. |
 | `finish_media_upload` | Verifica il file completo e lo importa nella timeline. Una ripetizione non crea doppioni. |
@@ -34,7 +34,7 @@ In assenza di una posizione richiesta, l’inserimento avviene in fondo al monta
 
 Dopo avere installato questa versione, **scollega e ricollega Claude** perché recuperi l’elenco aggiornato degli strumenti. Poi chiedi:
 
-> Inserisci il video appena creato nella timeline di TALEDIT usando gli strumenti MCP di importazione.
+> Inserisci il video appena creato nella timeline di EDITAL usando gli strumenti MCP di importazione.
 
 Un video creato solo nella chat non viene trasferito dal semplice collegamento MCP. Claude deve inviare un file realmente accessibile o i suoi byte. Un percorso come `/mnt/...` nel sandbox della chat non è un percorso del PC dell’utente: per quel caso servono il trasferimento a blocchi oppure un link HTTPS scaricabile. Un link che richiede l’accesso alla chat può non essere scaricabile dal server; non viene dichiarato un successo se il file non è arrivato.
 

@@ -4,12 +4,12 @@ Aggiornamento 4 novembre: disponibile un nuovo installer con la correzione FFmpe
 [Download e risultati aggiornati](ffmpeg-ai-cut-compatibility.md).
 Il rapporto sotto conserva i risultati della precedente versione.
 
-Pacchetto: `TALEDIT-Setup.exe`, installazione per utente Windows 10/11 x64.
+Pacchetto: `EDITAL-Setup.exe`, installazione per utente Windows 10/11 x64.
 Sorgente: [`336592184fc9`](https://github.com/talonet73/MyTalonet/tree/336592184fc93b1680e60c6e77e31143b856bfdf). Esecuzione Windows: [GitHub Actions Windows](https://github.com/talonet73/MyTalonet/actions/runs/41207002977).
 Stato: **PASS** — installer costruito, installato e verificato su Windows;
 release pubblicata e download completo controllato.
 
-[Scarica TALEDIT-Setup.exe](https://github.com/talonet73/MyTalonet/releases/download/taledit-windows-336592184fc9/TALEDIT-Setup.exe).
+[Installer storico TALEDIT-Setup.exe](https://github.com/talonet73/MyTalonet/releases/download/taledit-windows-336592184fc9/TALEDIT-Setup.exe).
 
 ## Contenuto e comportamento
 
@@ -19,11 +19,11 @@ progetto), 46 wheel Windows, Whisper small e U2NetP. Hash di archivi, wheel e mo
 sono bloccati in `packaging/windows/assets.lock.json`. Conservati licenze dei runtime,
 metadati/licenze Python e testi completi delle licenze dei modelli.
 
-L'installer crea il collegamento desktop e i comandi Start per aprire/chiudere TALEDIT.
+L'installer crea il collegamento desktop e i comandi Start per aprire/chiudere EDITAL.
 Non modifica il PATH generale e non richiede Python, Node o FFmpeg globali.
-L'interfaccia usa il browser installato, con server solo su `127.0.0.1:3000`.
+L'interfaccia usa il browser installato, con server solo su `127.0.0.1:3001`.
 Programma e modelli restano separati dai dati personali. La disinstallazione conserva
-`%LOCALAPPDATA%\TALEDIT\data` e i progetti salvati altrove.
+`%LOCALAPPDATA%\EDITAL\data` e i progetti salvati altrove.
 
 ## Correzioni emerse nelle prove reali
 
@@ -33,7 +33,7 @@ Il test ora preserva l'eccezione originale e il log, evita finestre interattive 
 sola modalità di verifica e pubblica le singole verifiche come notice di GitHub.
 
 La prova successiva ha mostrato esplicitamente il timeout di 15 secondi del secondo
-`TALEDIT.exe`, mentre installazione, runtime privati, UTF-8, trascrizione reale,
+`EDITAL.exe`, mentre installazione, runtime privati, UTF-8, trascrizione reale,
 U2NetP, primo avvio e chiusura avevano già superato i controlli.
 
 Il protocollo tra le istanze ora scambia messaggi terminati da newline, senza
@@ -91,5 +91,5 @@ L'installer è privo di firma digitale.
 SHA256 del file pubblicato e scaricato integralmente:
 
 ```text
-d79834038af5b8c98bac015b4e72936ce1b7450f173c50da92ae2304b2b0ce1f  TALEDIT-Setup.exe
+d79834038af5b8c98bac015b4e72936ce1b7450f173c50da92ae2304b2b0ce1f  EDITAL-Setup.exe
 ```

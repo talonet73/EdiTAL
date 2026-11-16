@@ -7,7 +7,7 @@ import {spawn, execFile, type ChildProcess} from 'node:child_process';
 import {describeMedia, downloadsDir, InputError, localMediaPath, probe, run} from './media';
 
 const python=()=>process.env.BG_PYTHON || '/workspace/.venv-bg/bin/python';
-const modelDir=()=>process.env.BG_MODEL_DIR || '/workspace/.cache/taledit/rembg';
+const modelDir=()=>process.env.BG_MODEL_DIR || '/workspace/.cache/edital/rembg';
 function stopChild(child?:ChildProcess){
   if(!child?.pid || child.exitCode!==null || child.signalCode!==null)return;
   if(process.platform==='win32')execFile('taskkill.exe',['/pid',String(child.pid),'/t','/f'],()=>{});else child.kill('SIGTERM');
@@ -20,7 +20,7 @@ export function installBackgroundRemover(app:Express) {
   app.get('/api/background/status',async(_req,res)=>res.json({ready:await ready(),engine:'rembg',model:'u2netp',free:true,local:true}));
   app.post('/api/background',async(req,res,next)=>{
     try {
-      if(!await ready()){res.status(503).json({error:'BG Remover non pronto. Riapri l’app con 2-AVVIA-TALEDIT, oppure esegui scripts/setup-bg.sh su Linux.'});return;}
+      if(!await ready()){res.status(503).json({error:'BG Remover non pronto. Riapri l’app con 2-AVVIA-EDITAL, oppure esegui scripts/setup-bg.sh su Linux.'});return;}
       if([...jobs.values()].some(j=>j.status==='running')){res.status(429).json({error:'Una rimozione dello sfondo è già in corso.'});return;}
       const {mediaUrl,type,offset=0,duration}=req.body || {};
       if(!['image','video'].includes(type) || !Number.isFinite(offset) || offset<0 || (type==='video' && (!Number.isFinite(duration)||duration<=0||duration>600)))throw new InputError('Seleziona una clip immagine o video valida, fino a 10 minuti.');
@@ -46,12 +46,12 @@ async function execute(job:Job,data:any) {
   let temporary:string|undefined;
   const cancelled=()=>job.status==='cancelled';
   try {
-    temporary=await fs.mkdtemp(path.join(os.tmpdir(),'taledit-bg-'));
+    temporary=await fs.mkdtemp(path.join(os.tmpdir(),'edital-bg-'));
     if(cancelled())return;
     const masked=data.type==='image'?output:path.join(temporary,'masked.webm');
     const video=data.info.streams.find((s:any)=>s.codec_type==='video');
     await new Promise<void>((resolve,reject)=>{
-      const child=spawn(python(),[path.resolve('scripts/remove-bg.py')],{stdio:['pipe','pipe','pipe'],env:{...process.env,BG_MODEL_DIR:modelDir(),NUMBA_CACHE_DIR:path.join(os.tmpdir(),'taledit-numba'),OMP_NUM_THREADS:'2'}});
+      const child=spawn(python(),[path.resolve('scripts/remove-bg.py')],{stdio:['pipe','pipe','pipe'],env:{...process.env,BG_MODEL_DIR:modelDir(),NUMBA_CACHE_DIR:path.join(os.tmpdir(),'edital-numba'),OMP_NUM_THREADS:'2'}});
       job.child=child;
       let stderr='',buffer='';const timer=setTimeout(()=>stopChild(child),30*60*1000);
       child.stdout.on('data',chunk=>{buffer+=chunk.toString();const lines=buffer.split('\n');buffer=lines.pop()!;for(const line of lines){try{job.progress=Math.min(95,JSON.parse(line).progress);}catch{/* Ignore diagnostics. */}}});

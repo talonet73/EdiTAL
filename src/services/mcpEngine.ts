@@ -13,7 +13,7 @@ export interface MCPToolCallResult {
 }
 
 export const CLAUDE_MCP_CONFIG = {
-  serverName: "taledit-video-editor-mcp",
+  serverName: "edital-video-editor-mcp",
   version: "1.0.0",
   protocolVersion: "2024-11-05",
   endpoints: {
@@ -25,11 +25,11 @@ export const CLAUDE_MCP_CONFIG = {
 
 // Generates the JSON snippet to paste into claude_desktop_config.json
 export function getClaudeDesktopConfigJson(hostUrl: string): string {
-  const origin = hostUrl || 'http://localhost:3000';
+  const origin = hostUrl || 'http://localhost:3001';
   return JSON.stringify(
     {
       mcpServers: {
-        taledit: {
+        edital: {
           command: "npx",
           args: [
             "-y",
@@ -37,7 +37,7 @@ export function getClaudeDesktopConfigJson(hostUrl: string): string {
             `${origin}/api/mcp/sse`
           ],
           env: {
-            APP_NAME: "TALEDIT",
+            APP_NAME: "EDITAL",
             EDITOR_MODE: "ACTIVE"
           }
         }
@@ -257,7 +257,7 @@ export function executeClaudePrompt(
 
   // Default fallback conversational response with suggestions
   return {
-    message: `Ricevuto comando da prompt: "${prompt}". Ho analizzato la timeline di TALEDIT. Puoi impartirmi ordini come:
+    message: `Ricevuto comando da prompt: "${prompt}". Ho analizzato la timeline di EDITAL. Puoi impartirmi ordini come:
 • "Taglia la clip al playhead"
 • "Imposta trasparenza video all'80%"
 • "Alza volume audio a +3 dB"

@@ -116,8 +116,8 @@ export async function exportMedia(body: any, options:{screenshot?:boolean}={}) {
   if (aspectRatio === '4:3') width = Math.round(height * 4 / 3 / 2) * 2;
   const videoKbps = Math.round((1500 + weight / 100 * 20500) * (resolution === '4K' ? 2.5 : resolution === '720p' ? .6 : 1));
   const audioKbps = Math.round(64 + weight / 100 * 256);
-  const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'taledit-export-'));
-  const fileName = `${options.screenshot?'TALEDIT_Screenshot':still?'TALEDIT_Immagine':'TALEDIT_Export'}_${resolution}_${randomUUID()}.${format}`;
+  const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'edital-export-'));
+  const fileName = `${options.screenshot?'EDITAL_Screenshot':still?'EDITAL_Immagine':'EDITAL_Export'}_${resolution}_${randomUUID()}.${format}`;
   const output = path.join(downloadsDir, fileName);
   try {
   const args = ['-hide_banner', '-loglevel', 'error', '-y', '-filter_complex_threads', '2'];

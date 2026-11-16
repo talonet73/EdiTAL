@@ -24,7 +24,7 @@ def api(route, body=None, filename=None):
     elif body is not None:
         data = json.dumps(body).encode()
         headers = {'Content-Type': 'application/json'}
-    with urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:3000' + route, data=data, headers=headers), timeout=180) as response:
+    with urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:3001' + route, data=data, headers=headers), timeout=180) as response:
         return json.load(response)
 
 def main():
@@ -33,7 +33,7 @@ def main():
     parser.add_argument('inventory', type=Path)
     args = parser.parse_args()
     assert os.name == 'nt', 'This verification must run on Windows'
-    with tempfile.TemporaryDirectory(prefix='taledit installer ',ignore_cleanup_errors=True) as folder:
+    with tempfile.TemporaryDirectory(prefix='edital installer ',ignore_cleanup_errors=True) as folder:
         install = Path(folder) / 'App con spazi'
         # NSIS requires /D last and unquoted, including directory names with spaces.
         subprocess.run(f'"{args.installer.resolve()}" /S /D={install}', check=True, timeout=600)
@@ -47,7 +47,7 @@ def main():
         subprocess.run([str(install / 'runtime/node.exe'), '--version'], check=True)
         downloader_version=subprocess.check_output([str(install/'tools/yt-dlp.exe'),'--version'],text=True).strip()
         assert downloader_version=='2026.08.19', downloader_version
-        env = {**os.environ, 'TALEDIT_NO_BROWSER': '1', 'WHISPER_MODEL_DIR': str(install / 'models/whisper-small'), 'BG_MODEL_DIR': str(install / 'models/bg'), 'PYTHONNOUSERSITE': '1', 'PYTHONHOME': str(install / 'runtime/python'), 'PYTHONUTF8': '1', 'PYTHONIOENCODING': 'utf-8', 'PYTHONPATH': '', 'OMP_NUM_THREADS': '2'}
+        env = {**os.environ, 'EDITAL_NO_BROWSER': '1', 'WHISPER_MODEL_DIR': str(install / 'models/whisper-small'), 'BG_MODEL_DIR': str(install / 'models/bg'), 'PYTHONNOUSERSITE': '1', 'PYTHONHOME': str(install / 'runtime/python'), 'PYTHONUTF8': '1', 'PYTHONIOENCODING': 'utf-8', 'PYTHONPATH': '', 'OMP_NUM_THREADS': '2'}
         python = install / 'runtime/python/python.exe'
         subprocess.run([str(python), '-c', "import av,ctranslate2,onnxruntime,faster_whisper,rembg;print('Private Windows Python, PyAV, Whisper, rembg: PASS')"], env=env, check=True, timeout=120)
         unicode_text = subprocess.check_output([str(python), '-c', "print('Caffè, più qualità: €')"], env=env).decode('utf-8').strip()
@@ -63,7 +63,7 @@ def main():
         assert output.stat().st_size > 1000, removed.stdout
         subprocess.run([str(python), '-c', "from PIL import Image;import sys;im=Image.open(sys.argv[1]);lo,hi=im.getchannel('A').getextrema();assert lo<20 and hi>200;print('Real segmentation alpha: PASS')",str(output)],env=env,check=True)
         print('::notice::Private Windows runtimes, UTF-8, real Whisper words/timestamps and real U2NetP: PASS',flush=True)
-        launcher = subprocess.Popen([str(install / 'TALEDIT.exe')], env=env)
+        launcher = subprocess.Popen([str(install / 'EDITAL.exe')], env=env)
         try:
             deadline = time.time() + 90
             while True:
@@ -73,18 +73,18 @@ def main():
                     break
                 except Exception:
                     if time.time() > deadline or launcher.poll() is not None:
-                        log = Path(os.environ['LOCALAPPDATA']) / 'TALEDIT/data/avvio.log'
+                        log = Path(os.environ['LOCALAPPDATA']) / 'EDITAL/data/avvio.log'
                         raise RuntimeError(log.read_text() if log.exists() else 'Startup failed without log')
                     time.sleep(.5)
             print('::notice::Installed EXE launch and private FFmpeg health: PASS',flush=True)
-            subprocess.run([str(install / 'TALEDIT.exe')],env=env,check=True,timeout=15)
+            subprocess.run([str(install / 'EDITAL.exe')],env=env,check=True,timeout=15)
             verify_ai_cut(install/'tools/ffmpeg.exe',folder)
             fixture = Path(folder) / 'source.mp4'
             subprocess.run([str(install/'tools/ffmpeg.exe'),'-v','error','-y','-f','lavfi','-i','color=c=red:s=160x90:r=25:d=1','-f','lavfi','-i','sine=frequency=440:duration=1','-c:v','libx264','-pix_fmt','yuv420p','-c:a','aac','-shortest',str(fixture)],check=True)
             asset = api('/api/upload-media',filename=fixture)['asset']
             clip = {'id':'v','name':asset['name'],'type':'video','trackId':'v','mediaUrl':asset['fileUrl'],'startTime':0,'duration':1,'offset':0,'transparency':100,'volumeDb':0,'fadeIn':0,'fadeOut':0}
             result = api('/api/export',{'format':'mp4','resolution':'720p','durationSec':1,'weightPercentage':20,'clips':[clip],'tracks':[]})
-            media = Path(os.environ['LOCALAPPDATA']) / 'TALEDIT/data/media_downloads'
+            media = Path(os.environ['LOCALAPPDATA']) / 'EDITAL/data/media_downloads'
             exported = media / result['fileName']
             info=json.loads(subprocess.check_output([str(install/'tools/ffprobe.exe'),'-v','error','-show_streams','-of','json',str(exported)],text=True))
             assert {s['codec_type'] for s in info['streams']} == {'video','audio'}
@@ -98,7 +98,7 @@ def main():
             subprocess.run(['npx.cmd', 'playwright', 'test', '--config', 'playwright.installed.config.ts'], cwd=ROOT, env=playback_env, check=True, timeout=2400)
             print('::notice::Duplicate launch, import, real MP4 export, PNG Downloads and browser UI: PASS',flush=True)
             desktop_result = Path(folder) / 'desktop-ui.json'
-            desktop_env = {**env, 'TALEDIT_DESKTOP_SMOKE':'1', 'TALEDIT_DESKTOP_SMOKE_RESULT':str(desktop_result)}
+            desktop_env = {**env, 'EDITAL_DESKTOP_SMOKE':'1', 'EDITAL_DESKTOP_SMOKE_RESULT':str(desktop_result)}
             subprocess.run([str(install/'runtime/electron/electron.exe'),str(install/'desktop.cjs')],env=desktop_env,check=True,timeout=90)
             desktop_ui=json.loads(desktop_result.read_text(encoding='utf-8'))
             assert desktop_ui.get('logo') is True and 'error' not in desktop_ui, desktop_ui
@@ -106,7 +106,7 @@ def main():
             marker=media/'installer-preserve-test.txt'
             marker.write_text('preserve user data')
         finally:
-            subprocess.run([str(install/'CHIUDI-TALEDIT.exe')],env=env,check=True,timeout=20)
+            subprocess.run([str(install/'CHIUDI-EDITAL.exe')],env=env,check=True,timeout=20)
             launcher.wait(timeout=20)
             print('::notice::Installed application shutdown: PASS',flush=True)
         subprocess.run(f'"{install / "Disinstalla.exe"}" /S _?={install}',check=True,timeout=120)
@@ -119,7 +119,7 @@ if __name__ == '__main__':
         main()
     except Exception as error:
         detail = (getattr(error, 'stderr', '') or '') + '\n' + ''.join(traceback.format_exception(error))
-        log=Path(os.environ.get('LOCALAPPDATA',''))/'TALEDIT/data/avvio.log'
+        log=Path(os.environ.get('LOCALAPPDATA',''))/'EDITAL/data/avvio.log'
         if log.is_file():detail+='\nSERVER LOG:\n'+log.read_text(encoding='utf-8',errors='replace')[-12000:]
         print('::error::' + detail.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A'), flush=True)
         raise

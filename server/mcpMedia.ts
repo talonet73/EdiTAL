@@ -23,7 +23,7 @@ export async function mediaDownload(url:string,file:string,redirects=0):Promise<
   const host=parsed.hostname.replace(/^\[|\]$/g,''),addresses=await lookup(host,{all:true});if(!addresses.length||addresses.some(a=>!publicAddress(a.address)))throw new Error('Il collegamento deve puntare a un server pubblico, non a indirizzi locali o riservati.');
   const pinned=addresses[0];
   const response=await new Promise<import('node:http').IncomingMessage>((resolve,reject)=>{
-    const request=https.get(parsed,{lookup:((_host:any,opts:any,callback:any)=>opts?.all?callback(null,[pinned]):callback(null,pinned.address,pinned.family)) as any,headers:{'User-Agent':'TALEDIT-MCP/2.1'}},resolve);
+    const request=https.get(parsed,{lookup:((_host:any,opts:any,callback:any)=>opts?.all?callback(null,[pinned]):callback(null,pinned.address,pinned.family)) as any,headers:{'User-Agent':'EDITAL-MCP/2.1'}},resolve);
     request.setTimeout(60000,()=>request.destroy(new Error('Download scaduto.')));request.on('error',reject);
   });
   if([301,302,303,307,308].includes(response.statusCode||0)){response.resume();if(redirects>=5||!response.headers.location)throw new Error('Troppi reindirizzamenti del file.');return mediaDownload(new URL(response.headers.location,parsed).href,file,redirects+1);}
@@ -54,7 +54,7 @@ export function createMediaToolHandler(get:()=>TimelineState,commit:(state:Timel
       time(args.timeSeconds);if([args.sourcePath,args.url,args.dataBase64].filter(v=>v!==undefined).length!==1)throw new Error('Fornisci una sola sorgente: sourcePath, url oppure dataBase64.');
       const fileName=safeMediaName(args.fileName||(args.sourcePath?path.basename(args.sourcePath):args.url?(extensions.includes(path.extname(new URL(args.url).pathname).toLowerCase())?path.basename(new URL(args.url).pathname):'video.mp4'):'video.mp4')),file=path.join(downloadsDir,`mcp_${randomUUID()}${path.extname(fileName).toLowerCase()}`);
       try{
-        if(args.sourcePath){if(typeof args.sourcePath!=='string'||!path.isAbsolute(args.sourcePath))throw new Error('sourcePath deve essere un percorso assoluto sul PC di TALEDIT. Per il sandbox di Claude usa il caricamento dei byte.');const stat=await fs.stat(args.sourcePath);if(!stat.isFile()||stat.size>MAX_BYTES)throw new Error('File mancante o oltre 500 MB.');await fs.copyFile(args.sourcePath,file,fs.constants.COPYFILE_EXCL);}
+        if(args.sourcePath){if(typeof args.sourcePath!=='string'||!path.isAbsolute(args.sourcePath))throw new Error('sourcePath deve essere un percorso assoluto sul PC di EDITAL. Per il sandbox di Claude usa il caricamento dei byte.');const stat=await fs.stat(args.sourcePath);if(!stat.isFile()||stat.size>MAX_BYTES)throw new Error('File mancante o oltre 500 MB.');await fs.copyFile(args.sourcePath,file,fs.constants.COPYFILE_EXCL);}
         else if(args.url){try{await mediaDownload(args.url,file);}catch(error){throw new Error(`Download non riuscito: ${(error as Error).message}. Se il link richiede l’accesso alla chat, trasferisci i byte con il caricamento MCP.`);}}
         else await fs.writeFile(file,decode(args.dataBase64,2*1024*1024),{flag:'wx'});
         const asset=await describeMedia(file,fileName);return attach(asset,args);

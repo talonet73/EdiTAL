@@ -1,8 +1,8 @@
-name: TALedit Windows playback probe
+name: EdiTAL Windows playback probe
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/taledit-playback-probe.yml', 'playwright.probe.config.ts', 'tests/browser/preview-av.spec.ts']
+    paths: ['.github/workflows/edital-playback-probe.yml', 'playwright.probe.config.ts', 'tests/browser/preview-av.spec.ts']
   workflow_dispatch:
 permissions:
   contents: read
@@ -31,5 +31,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: TALedit-Windows-playback-probe
+          name: EdiTAL-Windows-playback-probe
           path: test-results/

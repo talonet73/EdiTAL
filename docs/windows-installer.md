@@ -1,8 +1,8 @@
-# Installer unico TALEDIT per Windows
+# Installer unico EDITAL per Windows
 
-[Scarica TALEDIT-Setup.exe](https://github.com/talonet73/TALEDIT/releases/latest/download/TALEDIT-Setup.exe) · [Verifiche eseguite](windows-installer-verification.md).
+[Scarica EDITAL-Setup.exe](https://github.com/talonet73/EdiTAL/releases/latest/download/EDITAL-Setup.exe) · [Verifiche eseguite](windows-installer-verification.md).
 
-La distribuzione `TALEDIT-Setup.exe` installa per il solo utente Windows 10/11 x64,
+La distribuzione `EDITAL-Setup.exe` installa per il solo utente Windows 10/11 x64,
 crea il collegamento sul desktop e apre l'interfaccia in una finestra desktop Electron dedicata.
 Non richiede installazioni separate di Node.js, Python, FFmpeg o librerie/modelli AI.
 Non scarica pacchetti al primo avvio. Il programma non è firmato digitalmente.
@@ -14,28 +14,28 @@ Whisper small e U2NetP. I componenti hanno hash SHA256 bloccati in
 
 ## Utilizzo
 
-1. Chiudere la vecchia finestra nera di TALEDIT.
-2. Scaricare `TALEDIT-Setup.exe` dalla release Windows verificata su GitHub.
+1. Chiudere la vecchia finestra nera di EDITAL.
+2. Scaricare `EDITAL-Setup.exe` dalla release Windows verificata su GitHub.
 3. Aprirlo, scegliere **Avanti**, poi **Installa**, quindi **Fine**.
-4. Le volte successive aprire **TALEDIT** dal desktop.
-5. Per fermare anche il programma in background: menu Start → TALEDIT → **Chiudi TALEDIT**.
+4. Le volte successive aprire **EDITAL** dal desktop.
+5. Per fermare anche il programma in background: menu Start → EDITAL → **Chiudi EDITAL**.
 
-L'app resta locale: la finestra desktop usa il server privato `http://127.0.0.1:3000`.
+L'app resta locale: la finestra desktop usa il server privato `http://127.0.0.1:3001`.
 Chiudendo la finestra si arresta anche il server.
 Internet serve per le funzioni che comunicano con servizi esterni, come YouTube/MCP remoto.
 Le limitazioni dei servizi esterni non sono eliminate dall'installer.
 
 ## Progetti e aggiornamenti
 
-I programmi sono in `%LOCALAPPDATA%\Programs\TALEDIT`; file importati/esportati e log
-sono in `%LOCALAPPDATA%\TALEDIT\data` e sopravvivono alla disinstallazione.
+I programmi sono in `%LOCALAPPDATA%\Programs\EDITAL`; file importati/esportati e log
+sono in `%LOCALAPPDATA%\EDITAL\data` e sopravvivono alla disinstallazione.
 Gli screenshot usano la cartella Download di Windows, anche se reindirizzata.
-Il salvataggio del progetto resta quello dell'app. La finestra di TALedit va chiusa
+Il salvataggio del progetto resta quello dell'app. La finestra di EdiTAL va chiusa
 prima di aggiornare per evitare una vecchia interfaccia rimasta aperta.
 
 Per recuperare media della precedente versione ZIP: copiare **il contenuto** di
 `media_downloads` della vecchia cartella in
-`%LOCALAPPDATA%\TALEDIT\data\media_downloads`, senza cancellare gli originali,
+`%LOCALAPPDATA%\EDITAL\data\media_downloads`, senza cancellare gli originali,
 quindi usare **Apri** per aprire il progetto salvato.
 L'installer non cerca o sposta automaticamente le precedenti cartelle ZIP.
 
@@ -48,7 +48,7 @@ Su Linux è possibile la compilazione incrociata usando NSIS e
 `--whisper-model /percorso/modello --bg-model /percorso/modello`.
 Il bundle server non include il server di sviluppo Vite; l'importazione è differita.
 
-Il workflow `.github/workflows/taledit-windows.yml` prepara prima il payload con
+Il workflow `.github/workflows/edital-windows.yml` prepara prima il payload con
 `--payload-only`, prova avvio, tre riaperture e chiusura su Windows, poi esegue
 `--installer-only` per comprimere il pacchetto. I comandi tra le istanze usano
 messaggi terminati da newline; non dipendono dalla chiusura parziale della pipe.

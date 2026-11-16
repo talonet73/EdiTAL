@@ -1,4 +1,4 @@
-# Verifiche TALEDIT — 21 ottobre 2026
+# Verifiche EDITAL — 21 ottobre 2026
 
 ## Faster-whisper: causa e correzione
 

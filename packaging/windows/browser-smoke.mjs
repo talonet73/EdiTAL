@@ -4,7 +4,7 @@ const browser=await chromium.launch();
 try {
   const page=await browser.newPage({viewport:{width:1440,height:900}});
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
-  await page.goto('http://127.0.0.1:3000');
+  await page.goto('http://127.0.0.1:3001');
   await page.getByRole('button',{name:'Effects',exact:true}).waitFor();
   await page.getByRole('button',{name:'Effects',exact:true}).click();
   await page.getByRole('dialog',{name:'Pannello Effects'}).waitFor();

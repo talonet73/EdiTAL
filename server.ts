@@ -80,7 +80,7 @@ export async function createApp(production = process.env.NODE_ENV === 'productio
     app.use(vite.middlewares);
   }
   app.use((error: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-    console.error('[TALEDIT]', error.message);
+    console.error('[EDITAL]', error.message);
     if (res.headersSent) return;
     const invalid = error instanceof InputError || error.type === 'entity.parse.failed';
     res.status(invalid ? 400 : error.status || 500).json({ success: false, error: invalid ? error.message : 'Operazione fallita. Controlla i log del server e la disponibilità di FFmpeg.' });
@@ -88,5 +88,5 @@ export async function createApp(production = process.env.NODE_ENV === 'productio
   return app;
 }
 if (isServerEntry(import.meta.url)) {
-  createApp().then(app => {const server=app.listen(Number(process.env.PORT || 3000), process.env.HOST || '0.0.0.0', () => console.log('[TALEDIT] Server avviato sulla porta', process.env.PORT || 3000));server.requestTimeout=0;return server;}).catch(error => { console.error(error); process.exitCode = 1; });
+  createApp().then(app => {const server=app.listen(Number(process.env.PORT || 3001), process.env.HOST || '0.0.0.0', () => console.log('[EDITAL] Server avviato sulla porta', process.env.PORT || 3001));server.requestTimeout=0;return server;}).catch(error => { console.error(error); process.exitCode = 1; });
 }

@@ -1,4 +1,4 @@
-# Verifica strumenti e pulsanti TALEDIT
+# Verifica strumenti e pulsanti EDITAL
 
 Aggiornamento del 21 ottobre 2026. Le cinque schede della barra ora aprono strumenti operativi; il controllo non si limita al loro colore o alla presenza di un pulsante.
 

@@ -21,24 +21,24 @@ function npmCommand(action) {
 async function main() {
   if (process.platform !== 'win32') throw new Error('Questo avvio guidato e destinato a Windows.');
   const [major, minor] = process.versions.node.split('.').map(Number);
-  if (major < 22 || (major === 22 && minor < 12)) throw new Error('Aggiorna Node.js alla versione LTS dal sito nodejs.org, poi riapri TALEDIT.');
+  if (major < 22 || (major === 22 && minor < 12)) throw new Error('Aggiorna Node.js alla versione LTS dal sito nodejs.org, poi riapri EDITAL.');
   for (const command of ['ffmpeg', 'ffprobe']) {
-    if (spawnSync(command, ['-version'], { stdio: 'ignore' }).status !== 0) throw new Error('Manca uno strumento video. Esegui 1-PREPARA-TALEDIT.cmd.');
+    if (spawnSync(command, ['-version'], { stdio: 'ignore' }).status !== 0) throw new Error('Manca uno strumento video. Esegui 1-PREPARA-EDITAL.cmd.');
   }
   const python = [['py.exe', ['-3.12']], ['python.exe', []]].find(([command, args]) => spawnSync(command, [...args, '-c', 'import sys; assert sys.version_info[:2] == (3,12)'], { stdio:'ignore' }).status === 0);
-  if (!python) throw new Error('Manca Python 3.12. Esegui 1-PREPARA-TALEDIT.cmd.');
+  if (!python) throw new Error('Manca Python 3.12. Esegui 1-PREPARA-EDITAL.cmd.');
   const local = process.env.LOCALAPPDATA;
   if (!local) throw new Error('Non trovo la cartella personale di Windows.');
-  const cache = path.join(local, 'TALEDIT');
+  const cache = path.join(local, 'EDITAL');
   const env = { ...process.env, WHISPER_PYTHON: path.join(cache, 'whisper-env', 'Scripts', 'python.exe'), WHISPER_MODEL_DIR: path.join(cache, 'whisper-small'), HF_HOME: path.join(cache, 'huggingface'), HF_XET_CACHE: path.join(cache, 'huggingface', 'xet'), BG_PYTHON:path.join(cache,'bg-env','Scripts','python.exe'),BG_MODEL_DIR:path.join(cache,'bg-models'),npm_config_cache: path.join(cache, 'npm') };
   // Use the Windows Known Folder path, including redirected Downloads folders.
   const downloads=spawnSync('powershell.exe',['-NoProfile','-Command',"$d=(Get-ItemProperty -LiteralPath 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders').'{374DE290-123F-4565-9164-39C4925E467B}'; if($d){[Environment]::ExpandEnvironmentVariables($d)}"],{encoding:'utf8',windowsHide:true});
   env.SCREENSHOT_DIR=downloads.status===0 && downloads.stdout.trim()?downloads.stdout.trim():path.join(os.homedir(),'Downloads');
   fs.mkdirSync(cache, {recursive:true});
   const lockHash = crypto.createHash('sha256').update(fs.readFileSync(path.join(root, 'package-lock.json'))).digest('hex');
-  const marker = path.join(root, 'node_modules', '.taledit-lock');
+  const marker = path.join(root, 'node_modules', '.edital-lock');
   if (!fs.existsSync(marker) || fs.readFileSync(marker, 'utf8') !== lockHash) {
-    console.log('Preparo TALEDIT. Al primo avvio possono servire alcuni minuti...');
+    console.log('Preparo EDITAL. Al primo avvio possono servire alcuni minuti...');
     const [command, args] = npmCommand('install'); await run(command, args, env);
     fs.writeFileSync(marker, lockHash);
   }
@@ -65,15 +65,15 @@ async function main() {
       fs.writeFileSync(bgMarker,bgHash);
     }
     if(!fs.existsSync(path.join(env.BG_MODEL_DIR,'models','u2netp','u2netp.onnx')))await run(env.BG_PYTHON,[path.join(root,'scripts','download-bg-model.py')],env);
-  }catch(error){console.error('BG Remover non pronto:',error.message);console.error('TALEDIT si avvia comunque. Riapri l’app per riprovare la preparazione.');}
-  const port = Number(env.PORT || 3000);
+  }catch(error){console.error('BG Remover non pronto:',error.message);console.error('EDITAL si avvia comunque. Riapri l’app per riprovare la preparazione.');}
+  const port = Number(env.PORT || 3001);
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('Impostazione di avvio non valida.');
   const origin = `http://127.0.0.1:${port}`;
   async function healthy() {
     try { const response = await fetch(origin+'/api/health', {signal:AbortSignal.timeout(2000)}); const data=await response.json(); return response.ok && data.ffmpeg === true && data.ffprobe === true; } catch {return false;}
   }
   function openBrowser() { const child=spawn('rundll32.exe',['url.dll,FileProtocolHandler',origin],{detached:true,stdio:'ignore'});child.on('error',()=>console.error('Apri il browser e digita:',origin));child.unref(); }
-  if (await healthy()) { console.log('TALEDIT e gia avviato. Apro il browser.');openBrowser();return; }
+  if (await healthy()) { console.log('EDITAL e gia avviato. Apro il browser.');openBrowser();return; }
   const [command,args] = npmCommand('start');
   const child = spawn(command,args,{cwd:root,env,stdio:'inherit'});
   let startupError;
@@ -81,14 +81,14 @@ async function main() {
   const deadline=Date.now()+60000;
   while(Date.now()<deadline) {
     if(startupError)throw startupError;
-    if(child.exitCode !== null)throw new Error('TALEDIT si e fermato durante l’avvio. Controlla il messaggio sopra.');
+    if(child.exitCode !== null)throw new Error('EDITAL si e fermato durante l’avvio. Controlla il messaggio sopra.');
     if(await healthy()) {
-      console.log('TALEDIT e pronto. Apro il browser. Lascia aperta questa finestra mentre lavori.');
+      console.log('EDITAL e pronto. Apro il browser. Lascia aperta questa finestra mentre lavori.');
       openBrowser();
       await new Promise(resolve=>child.once('exit',resolve));return;
     }
     await wait(500);
   }
-  child.kill();throw new Error('TALEDIT non ha risposto entro un minuto. Controlla il messaggio sopra.');
+  child.kill();throw new Error('EDITAL non ha risposto entro un minuto. Controlla il messaggio sopra.');
 }
 if(require.main===module)main().catch(error=>{console.error(error.message);process.exitCode=1;});

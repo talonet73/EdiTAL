@@ -8,7 +8,7 @@ import type {Track} from '../types/editor';
 import {clipRate,sourceTime} from './clipSpeed';
 import { adjustPixels, clipAlpha, colorSettings, motionAt, effectAmount, effectMix, type VisualSettings } from './visualSettings';
 /**
- * Real Media & Canvas Rendering Engine for TALEDIT
+ * Real Media & Canvas Rendering Engine for EDITAL
  * Supports playback of real imported HTML5 video, audio and images,
  * with volumeDb gain control, camera shake, transparency & effects.
  * NO synthetic oscillator drone sound!

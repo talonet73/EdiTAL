@@ -23,8 +23,8 @@ test('packaged Windows runtime uses only private executables and separates user 
   assert.equal(config.env.PYTHONNOUSERSITE,'1');assert.equal(config.env.PYTHONPATH,'');
 });
 test('packaged launcher control waits for the reply, and treats a missing instance as stopped',async()=>{
-  const temp=await fs.mkdtemp(path.join(os.tmpdir(),'taledit-control-'));
-  const pipe=process.platform==='win32'?`\\\\.\\pipe\\taledit-test-${Date.now()}`:path.join(temp,'control.sock');
+  const temp=await fs.mkdtemp(path.join(os.tmpdir(),'edital-control-'));
+  const pipe=process.platform==='win32'?`\\\\.\\pipe\\edital-test-${Date.now()}`:path.join(temp,'control.sock');
   const received:string[]=[];
   const server=net.createServer({allowHalfOpen:true},socket=>{
     let command='';socket.setEncoding('utf8');socket.on('data',chunk=>command+=chunk);
@@ -39,7 +39,7 @@ test('packaged launcher control waits for the reply, and treats a missing instan
 });
 
 test('server entrypoint recognizes filesystem aliases and rejects unrelated imports',async()=>{
-  const folder=await fs.mkdtemp(path.join(os.tmpdir(),'taledit-entry-'));
+  const folder=await fs.mkdtemp(path.join(os.tmpdir(),'edital-entry-'));
   try {
     const main=path.join(folder,'server.mjs'),alias=path.join(folder,'alias.mjs'),other=path.join(folder,'test.mjs');
     await fs.writeFile(main,'');await fs.writeFile(other,'');await fs.symlink(main,alias);

@@ -1,9 +1,9 @@
 import sharp from 'sharp';
 import { mkdir, writeFile } from 'node:fs/promises';
 await mkdir('public', { recursive: true });
-await sharp('logo_TALedit.png').resize(512, 512).png().toFile('public/taledit-logo.png');
+await sharp('logo_EdiTAL.png').resize(512, 512).png().toFile('public/edital-logo.png');
 const sizes = [16, 24, 32, 48, 64, 128, 256];
-const images = await Promise.all(sizes.map(size => sharp('logo_TALedit.png').resize(size, size).png().toBuffer()));
+const images = await Promise.all(sizes.map(size => sharp('logo_EdiTAL.png').resize(size, size).png().toBuffer()));
 const header = Buffer.alloc(6 + 16 * sizes.length);
 header.writeUInt16LE(1, 2);
 header.writeUInt16LE(sizes.length, 4);
@@ -17,4 +17,4 @@ images.forEach((image, index) => {
   header.writeUInt32LE(offset, pos + 12);
   offset += image.length;
 });
-await writeFile('public/taledit.ico', Buffer.concat([header, ...images]));
+await writeFile('public/edital.ico', Buffer.concat([header, ...images]));

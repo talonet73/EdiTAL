@@ -10,7 +10,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
 const exec = promisify(execFile);
-const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'taledit-test-'));
+const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'edital-test-'));
 process.env.MEDIA_DIR = temp;
 const { createApp } = await import('../server');
 const { youtubeUrl } = await import('../server/youtube');
@@ -102,13 +102,13 @@ test('muted/solo tracks and silent video do not leak sound', async () => {
   const noAudio = await exported({clips:[clip(silent)]}); assert.ok(rms(await samples(noAudio.file))<.0001);
 });
 test('image-only export, portrait ratio, subtitles including shell metacharacters', async () => {
-  const {file,info}=await exported({aspectRatio:'9:16',clips:[clip(image)],subtitles:[{startTime:0,endTime:2,text:'Ciao: 50% \' " ; $(touch /tmp/TALEDIT_INJECTION) [ok]'}]});
+  const {file,info}=await exported({aspectRatio:'9:16',clips:[clip(image)],subtitles:[{startTime:0,endTime:2,text:'Ciao: 50% \' " ; $(touch /tmp/EDITAL_INJECTION) [ok]'}]});
   const stream=info.streams.find((s:any)=>s.codec_type==='video'); assert.equal(stream.width,720); assert.equal(stream.height,1280);
-  await assert.rejects(fs.access('/tmp/TALEDIT_INJECTION'));
+  await assert.rejects(fs.access('/tmp/EDITAL_INJECTION'));
   const rgb=await pixel(file,.5); assert.ok(rgb[1]>rgb[0],String(rgb));
 });
 test('missing media and invalid exports fail explicitly instead of producing black/silence substitutes', async () => {
-  for(const body of [{clips:[clip(video,{mediaUrl:'/media_downloads/missing.mp4'})]},{clips:[]},{format:'mp4; touch /tmp/TALEDIT_INJECTION',clips:[clip(video)]},{clips:[clip(video,{mediaUrl:'/media_downloads/../server.ts'})]},{clips:[clip(video,{startTime:-1})]},{durationSec:601,clips:[clip(video)]},{format:'wav',clips:[clip(image)]}]) {
+  for(const body of [{clips:[clip(video,{mediaUrl:'/media_downloads/missing.mp4'})]},{clips:[]},{format:'mp4; touch /tmp/EDITAL_INJECTION',clips:[clip(video)]},{clips:[clip(video,{mediaUrl:'/media_downloads/../server.ts'})]},{clips:[clip(video,{startTime:-1})]},{durationSec:601,clips:[clip(video)]},{format:'wav',clips:[clip(image)]}]) {
     assert.equal((await api('/api/export', {durationSec:2,...body})).status,400,JSON.stringify(body));
   }
 });
@@ -126,7 +126,7 @@ for(const mode of ['http','sse']) test(`MCP ${mode} SDK handshake, real tools, l
   const state={ clips:[clip(video,{linkedClipId:'a',isLinked:true}),clip(video,{id:'a',type:'audio',trackId:'audio',linkedClipId:'v',isLinked:true})],tracks:[],subtitles:[],mediaAssets:[video],currentTime:0,selectedClipId:'v',aspectRatio:'16:9' };
   assert.equal((await api('/api/editor/state',{state,revision:snap.data.revision},'PUT')).status,200);
   await api('/api/editor/connection',{enabled:true});
-  const client=new Client({name:'taledit-test',version:'1.0.0'});
+  const client=new Client({name:'edital-test',version:'1.0.0'});
   const transport=mode==='http'?new StreamableHTTPClientTransport(new URL(base+'/api/mcp')):new SSEClientTransport(new URL(base+'/api/mcp/sse'));
   try {
     await client.connect(transport);

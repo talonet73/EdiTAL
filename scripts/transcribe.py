@@ -7,7 +7,7 @@ import sys
 def main():
     from faster_whisper import WhisperModel
     data = json.load(sys.stdin)
-    model_path = os.environ.get('WHISPER_MODEL_DIR', '/workspace/.cache/taledit/whisper-small')
+    model_path = os.environ.get('WHISPER_MODEL_DIR', '/workspace/.cache/edital/whisper-small')
     if not os.path.isfile(os.path.join(model_path, 'model.bin')):
         raise RuntimeError('Modello Whisper non installato. Esegui scripts/setup-whisper.sh con accesso a Hugging Face.')
     model = WhisperModel(model_path, device='cpu', compute_type='int8', cpu_threads=4, local_files_only=True)

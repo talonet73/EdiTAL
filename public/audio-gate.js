@@ -1,5 +1,5 @@
 /* Envelope-based downward expansion; one shared detector preserves stereo imaging. */
-class TaleditGate extends AudioWorkletProcessor {
+class EditalGate extends AudioWorkletProcessor {
   static get parameterDescriptors(){return [['amount',0,0,100],['compression',0,0,100],['threshold',-24,-60,0],['ratio',4,1,20],['attack',10,1,100],['release',200,20,1000]].map(([name,defaultValue,minValue,maxValue])=>({name,defaultValue,minValue,maxValue,automationRate:'k-rate'}));}
   constructor(){super();this.envelope=0;this.gain=1;this.compressorEnvelope=0;}
   process(inputs,outputs,params){
@@ -21,4 +21,4 @@ class TaleditGate extends AudioWorkletProcessor {
     return true;
   }
 }
-registerProcessor('taledit-gate',TaleditGate);
+registerProcessor('edital-gate',EditalGate);

@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 test('stage imports ProRes MOV and FLAC and renders the MOV through its compatible preview',async({page})=>{
- const folder=fs.mkdtempSync(path.join(os.tmpdir(),'taledit browser formats '));
+ const folder=fs.mkdtempSync(path.join(os.tmpdir(),'edital browser formats '));
  try {
   const mov=path.join(folder,'Ripresa ProRes.mov'),flac=path.join(folder,'Voce.flac');
   execFileSync('ffmpeg',['-v','error','-y','-f','lavfi','-i','color=red:s=320x180:r=60:d=1','-f','lavfi','-i','sine=d=1','-c:v','prores_ks','-threads','2','-pix_fmt','yuv422p10le','-c:a','pcm_s16le','-shortest',mov]);
@@ -21,7 +21,7 @@ test('stage imports ProRes MOV and FLAC and renders the MOV through its compatib
 });
 
 test('long media appears in the stage before conversion completes, with working cancel and retry',async({page,request})=>{
- const folder=fs.mkdtempSync(path.join(os.tmpdir(),'taledit background preview '));
+ const folder=fs.mkdtempSync(path.join(os.tmpdir(),'edital background preview '));
  try{
   const source=path.join(folder,'Anteprima lunga.mov');
   execFileSync('ffmpeg',['-v','error','-y','-f','lavfi','-i','testsrc2=s=640x360:r=60:d=120','-c:v','libx264','-preset','ultrafast','-threads','2','-pix_fmt','yuv420p',source]);

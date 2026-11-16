@@ -90,7 +90,7 @@ export const ClaudeMCPDialog: React.FC<ClaudeMCPDialogProps> = ({
                 </span>
               </div>
               <p className="text-[11px] text-gray-400">
-                TALEDIT Video Editor connesso via Model Context Protocol
+                EDITAL Video Editor connesso via Model Context Protocol
               </p>
             </div>
           </div>
@@ -135,7 +135,7 @@ export const ClaudeMCPDialog: React.FC<ClaudeMCPDialogProps> = ({
             }`}
           >
             <Terminal className="w-3.5 h-3.5" />
-            <span>Prompt Console TALEDIT</span>
+            <span>Prompt Console EDITAL</span>
           </button>
 
           <button
@@ -165,10 +165,10 @@ export const ClaudeMCPDialog: React.FC<ClaudeMCPDialogProps> = ({
 
         <button onClick={() => setActiveTab('chatgpt')} className="text-xs px-4 py-2 text-emerald-300 bg-emerald-950/40">Configura ChatGPT MCP</button>
         {activeTab === 'chatgpt' && <div className="p-5 overflow-y-auto text-xs space-y-3">
-          <h4 className="font-bold text-emerald-300 text-sm">Collega ChatGPT a TALEDIT</h4>
+          <h4 className="font-bold text-emerald-300 text-sm">Collega ChatGPT a EDITAL</h4>
           <p>In ChatGPT, apri le impostazioni delle app e abilita la modalità sviluppatore se disponibile nel tuo account. Crea un’app MCP con questo URL:</p>
           <code className="block p-3 rounded bg-black/50 text-emerald-300 break-all">{currentHost}/api/mcp</code>
-          <p>ChatGPT deve poter raggiungere un indirizzo HTTPS pubblico del server TALEDIT. Un indirizzo localhost non è raggiungibile da ChatGPT. Attiva il collegamento MCP in questa finestra prima di usare gli strumenti.</p>
+          <p>ChatGPT deve poter raggiungere un indirizzo HTTPS pubblico del server EDITAL. Un indirizzo localhost non è raggiungibile da ChatGPT. Attiva il collegamento MCP in questa finestra prima di usare gli strumenti.</p>
           <p>Il server supporta Streamable HTTP. La connessione usa l’autenticazione configurata dal gestore del server; in locale nessun token è richiesto. Per pubblicarlo, proteggi l’accesso e configura MCP_AUTH_TOKEN o un gateway OAuth compatibile con il client.</p>
           <p>Prova: “Leggi lo stato della timeline”, poi “Taglia la clip selezionata a 3 secondi”. Le modifiche compaiono nell’editor. Il pulsante ON abilita gli strumenti: la connessione del client avviene in ChatGPT.</p>
         </div>}
@@ -290,7 +290,7 @@ export const ClaudeMCPDialog: React.FC<ClaudeMCPDialogProps> = ({
               </h4>
               <p className="text-gray-300 leading-relaxed">
                 La console interna usa comandi locali. Puoi collegare anche l’applicazione ufficiale <strong>Claude Desktop</strong>.
-                TALEDIT espone un endpoint standard MCP su protocollo SSE:
+                EDITAL espone un endpoint standard MCP su protocollo SSE:
               </p>
               <div className="mt-2 font-mono text-[11px] bg-black/60 p-2 rounded text-cyan-300 border border-cyan-900/40">
                 {currentHost}/api/mcp/sse
@@ -328,7 +328,7 @@ export const ClaudeMCPDialog: React.FC<ClaudeMCPDialogProps> = ({
         {activeTab === 'tools' && (
           <div className="p-4 flex-1 overflow-y-auto text-xs space-y-2">
             <div className="text-gray-300 mb-2">
-              Strumenti MCP esposti da TALEDIT a disposizione dei prompt di Claude:
+              Strumenti MCP esposti da EDITAL a disposizione dei prompt di Claude:
             </div>
             <p className="p-2 border border-cyan-800 rounded text-cyan-100">Per un video appena creato, chiedi a Claude di usare import_media: il file viene inserito nello stage e nella timeline con il suo audio. Se il file è nel sandbox della chat, serve trasferirne i byte oppure fornire un link scaricabile. Dopo l’aggiornamento ricollega Claude per aggiornare l’elenco degli strumenti.</p>
             {CLAUDE_MCP_CONFIG.availableTools.map(tool => (

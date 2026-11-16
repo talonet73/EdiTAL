@@ -3,7 +3,7 @@ const { app, BrowserWindow, session } = require('electron');
 const path = require('node:path');
 const { runtime, control } = require('./launcher.cjs');
 const config = runtime(__dirname);
-app.setName('TALedit');
+app.setName('EdiTAL');
 const profile = path.join(config.cache, 'desktop-profile');
 require('node:fs').mkdirSync(profile, { recursive: true });
 app.setPath('userData', profile);
@@ -17,14 +17,14 @@ if (!app.requestSingleInstanceLock()) app.quit();
 else {
   app.on('second-instance', focus);
   app.whenReady().then(async () => {
-    app.setAppUserModelId('it.taledit.desktop');
+    app.setAppUserModelId('it.edital.desktop');
     session.defaultSession.setPermissionRequestHandler((contents, permission, callback) => {
       callback(contents.getURL().startsWith(config.origin + '/') && permission === 'media');
     });
     window = new BrowserWindow({
-      title: 'TALedit', width: 1680, height: 1000, minWidth: 1100, minHeight: 720,
+      title: 'EdiTAL', width: 1680, height: 1000, minWidth: 1100, minHeight: 720,
       backgroundColor: '#0b0f19', show: false, autoHideMenuBar: true,
-      icon: path.join(__dirname, 'app', 'dist', 'taledit-logo.png'),
+      icon: path.join(__dirname, 'app', 'dist', 'edital-logo.png'),
       webPreferences: { nodeIntegration: false, contextIsolation: true, sandbox: true },
     });
     window.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
@@ -33,20 +33,20 @@ else {
     });
     window.once('ready-to-show', focus);
     await window.loadURL(config.origin);
-    if (process.env.TALEDIT_DESKTOP_SMOKE === '1') {
+    if (process.env.EDITAL_DESKTOP_SMOKE === '1') {
       try {
         const result = await window.webContents.executeJavaScript(`({
-          logo: !!document.querySelector('img[alt="Logo TALedit"]')?.complete,
+          logo: !!document.querySelector('img[alt="Logo EdiTAL"]')?.complete,
           text: document.body.innerText,
         })`);
-        if (!result.logo || !['TALedit','ChatGPT MCP','BG Remover','AI Cut','Pen Mask','Screenshot','VIDEO','AUDIO','COLOR'].every(label => result.text.includes(label))) {
-          throw new Error('Complete desktop UI or TALedit logo missing');
+        if (!result.logo || !['EdiTAL','ChatGPT MCP','BG Remover','AI Cut','Pen Mask','Screenshot','VIDEO','AUDIO','COLOR'].every(label => result.text.includes(label))) {
+          throw new Error('Complete desktop UI or EdiTAL logo missing');
         }
-        require('node:fs').writeFileSync(process.env.TALEDIT_DESKTOP_SMOKE_RESULT, JSON.stringify(result));
+        require('node:fs').writeFileSync(process.env.EDITAL_DESKTOP_SMOKE_RESULT, JSON.stringify(result));
         const screenshot = await window.webContents.capturePage();
-        require('node:fs').writeFileSync(process.env.TALEDIT_DESKTOP_SMOKE_RESULT + '.png', screenshot.toPNG());
+        require('node:fs').writeFileSync(process.env.EDITAL_DESKTOP_SMOKE_RESULT + '.png', screenshot.toPNG());
       } catch (error) {
-        require('node:fs').writeFileSync(process.env.TALEDIT_DESKTOP_SMOKE_RESULT, JSON.stringify({ error: error.message }));
+        require('node:fs').writeFileSync(process.env.EDITAL_DESKTOP_SMOKE_RESULT, JSON.stringify({ error: error.message }));
       }
       window.close();
     }

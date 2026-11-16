@@ -2,7 +2,7 @@
 import hashlib
 import os
 from pathlib import Path
-os.environ['U2NET_HOME'] = os.environ.get('BG_MODEL_DIR', '/workspace/.cache/taledit/rembg')
+os.environ['U2NET_HOME'] = os.environ.get('BG_MODEL_DIR', '/workspace/.cache/edital/rembg')
 os.environ.setdefault('OMP_NUM_THREADS', '2')
 from rembg import new_session
 

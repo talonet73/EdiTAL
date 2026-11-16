@@ -12,7 +12,7 @@ import {changeClipSpeed,clipRate,validSpeedLevel} from './services/clipSpeed';
 import {duplicateTrack} from './services/duplicateTrack';
 import {downloadScreenshot} from './services/screenshotDownload';
 /**
- * TALEDIT - Video Editor con Claude DT MCP Integration
+ * EDITAL - Video Editor con Claude DT MCP Integration
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -180,7 +180,7 @@ export default function App() {
       id: 'init_msg_1',
       role: 'claude',
       content:
-        'Benvenuto in TALEDIT! La console locale interpreta comandi di montaggio. Claude e ChatGPT si collegano tramite gli endpoint MCP nella scheda di configurazione. Puoi accendere o spegnere il collegamento in qualsiasi momento dal pulsante in alto. Prova a digitare: "Taglia a 00:15", "Imposta trasparenza al 70%" o "Alza volume a +3dB".',
+        'Benvenuto in EDITAL! La console locale interpreta comandi di montaggio. Claude e ChatGPT si collegano tramite gli endpoint MCP nella scheda di configurazione. Puoi accendere o spegnere il collegamento in qualsiasi momento dal pulsante in alto. Prova a digitare: "Taglia a 00:15", "Imposta trasparenza al 70%" o "Alza volume a +3dB".',
       timestamp: 'Adesso',
     },
   ]);
@@ -357,7 +357,7 @@ export default function App() {
   // Save TAL Project (CTRL+S)
   const handleSaveTalProject = () => {
     const projectData = {
-      appName: 'TALEDIT',
+      appName: 'EDITAL',
       version: '3.0.0',captionWorkflow:'timeline',
       savedAt: new Date().toISOString(),
       tracks,audioMaster,
@@ -376,7 +376,7 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Progetto_TALEDIT_${Date.now()}.tal`;
+    a.download = `Progetto_EDITAL_${Date.now()}.tal`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -390,7 +390,7 @@ export default function App() {
       try {
         const content = evt.target?.result as string;
         const data = JSON.parse(content);
-        if (data.appName !== 'TALEDIT' || !Array.isArray(data.tracks) || !Array.isArray(data.clips) || data.clips.some((c: any) => !c.id || !['video','audio','image','effect','text'].includes(c.type) || !Number.isFinite(c.startTime) || c.startTime < 0 || !Number.isFinite(c.duration) || c.duration <= 0 || !validSpeedLevel(c.speedLevel))) throw new Error('Progetto TALEDIT non valido.');
+        if (data.appName !== 'EDITAL' || !Array.isArray(data.tracks) || !Array.isArray(data.clips) || data.clips.some((c: any) => !c.id || !['video','audio','image','effect','text'].includes(c.type) || !Number.isFinite(c.startTime) || c.startTime < 0 || !Number.isFinite(c.duration) || c.duration <= 0 || !validSpeedLevel(c.speedLevel))) throw new Error('Progetto EDITAL non valido.');
         expandCompoundClips(data.clips);
         validateAudio(data.audioMaster);for(const t of data.tracks)validateAudio(t.audio);for(const c of data.clips){validateGrade(c.colorGrade);validateMask(c.mask);validateCaptionClip(c);}
         setAudioMaster(data.audioMaster||{});
@@ -557,7 +557,7 @@ export default function App() {
       id: `conn_${Date.now()}`,
       role: 'claude',
       content: nextState
-        ? '✦ Collegamento MCP con Claude DT ATTIVATO. TALEDIT è pronto a ricevere prompt e comandi sia dall\'app che da Claude Desktop.'
+        ? '✦ Collegamento MCP con Claude DT ATTIVATO. EDITAL è pronto a ricevere prompt e comandi sia dall\'app che da Claude Desktop.'
         : 'Collegamento con Claude DT DISATTIVATO manualmente.',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       status: nextState ? 'success' : 'info',
@@ -993,7 +993,7 @@ export default function App() {
               {formatTimecode(currentTime)}
             </span>
             <span>•</span>
-            <span className="text-gray-400">TALEDIT MCP Studio</span>
+            <span className="text-gray-400">EDITAL MCP Studio</span>
           </div>
         </div>
 

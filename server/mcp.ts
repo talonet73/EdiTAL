@@ -49,11 +49,11 @@ export function installMcp(app: Express) {
   };
   const mediaHandler=createMediaToolHandler(()=>state,next=>{state=next;revision++;broadcast();},()=>enabled);
   const makeServer = () => {
-    const server = new Server({ name: 'TALEDIT', version: '2.0.0' }, { capabilities: { tools: {} } });
+    const server = new Server({ name: 'EDITAL', version: '2.0.0' }, { capabilities: { tools: {} } });
     server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: [...timelineTools,...mediaTools] }));
     server.setRequestHandler(CallToolRequestSchema, async request => {
       try {
-        if (!enabled) throw new Error('Collegamento MCP spento. Attivalo in TALEDIT.');
+        if (!enabled) throw new Error('Collegamento MCP spento. Attivalo in EDITAL.');
         if(mediaTools.some(t=>t.name===request.params.name)){const result=await mediaHandler(request.params.name,request.params.arguments||{});return {content:[{type:'text',text:JSON.stringify({success:true,...result,...snapshot()})}]};}
         const next = applyTimelineTool(state, request.params.name, request.params.arguments || {});
         if (next !== state) { state = next; revision++; broadcast(); }

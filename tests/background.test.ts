@@ -6,7 +6,7 @@ import path from 'node:path';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import type {Server} from 'node:http';
-const exec=promisify(execFile),temp=await fs.mkdtemp(path.join(os.tmpdir(),'taledit-bg-test-'));
+const exec=promisify(execFile),temp=await fs.mkdtemp(path.join(os.tmpdir(),'edital-bg-test-'));
 process.env.MEDIA_DIR=temp;
 const {createApp}=await import('../server');
 let server:Server,base:string;

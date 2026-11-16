@@ -34,7 +34,7 @@ test('real full-range scopes identify black, white, red and actual spatial posit
   const s=scopeData(pixels,8,2);assert.equal(s.count,4);assert.equal(s.min,0);assert.ok(Math.abs(s.max-255)<1e-8);assert.equal(s.black,25);assert.equal(s.white,25);assert.equal(s.hist[0][255],2);assert.equal(s.wave[0],1);assert.equal(s.wave[127*160+40],1);assert.equal(s.vector.reduce((sum,n)=>sum+n,0),4);
 });
 test('browser trilinear grading agrees with real FFmpeg lut3d on a multicolor raster',async()=>{
-  const temp=await fs.mkdtemp(path.join(os.tmpdir(),'taledit-grade-'));
+  const temp=await fs.mkdtemp(path.join(os.tmpdir(),'edital-grade-'));
   try{
     const data=Buffer.alloc(32*32*3);for(let i=0;i<1024;i++){data[i*3]=(i*7)%256;data[i*3+1]=(i*13)%256;data[i*3+2]=(i*29)%256;}await fs.writeFile(path.join(temp,'input.rgb'),data);
     const settings:ColorGrade={exposure:.4,contrast:1.2,pivot:.4,temperature:15,tint:-10,saturation:120,vibrance:20,hue:8,liftR:5,gammaB:8,gainG:-5,offsetY:2,shadows:5,highlights:-10,curves:{master:[0,.12,.28,.53,.72,.88,1],blue:[0,.2,.4,.58,.75,.9,1]}};

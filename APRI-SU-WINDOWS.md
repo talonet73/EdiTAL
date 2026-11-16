@@ -1,4 +1,4 @@
-# Aprire TALEDIT su Windows
+# Aprire EDITAL su Windows
 
 ## Metodo consigliato: un solo file da installare
 
@@ -6,14 +6,14 @@ La versione del 4 novembre corregge l’errore AI Cut “filter_complex_script�
 Salva il progetto, conserva la vecchia cartella e chiudi anche la vecchia finestra
 nera prima di aprire la versione aggiornata dall’icona sul desktop.
 
-1. Salva il progetto e chiudi TALEDIT e la vecchia finestra nera di avvio.
-2. [Scarica **TALEDIT-Setup.exe**](https://github.com/talonet73/TALEDIT/releases/download/taledit-windows-254868b1592a/TALEDIT-Setup.exe).
+1. Salva il progetto e chiudi EDITAL e la vecchia finestra nera di avvio.
+2. [Scarica **EDITAL-Setup.exe**](https://github.com/talonet73/EdiTAL/releases/latest/download/EDITAL-Setup.exe).
 3. Apri il file e premi **Avanti**, poi **Installa**, quindi **Fine**.
-4. Le volte successive apri **TALEDIT** dall’icona sul desktop.
+4. Le volte successive apri **EDITAL** dall’icona sul desktop.
 
 Python, strumenti video e modelli gratuiti sono inclusi. L’installer è per Windows
 10/11 a 64 bit. L’app si apre nel browser del computer.
-Per fermarla del tutto usa **Start → TALEDIT → Chiudi TALEDIT**.
+Per fermarla del tutto usa **Start → EDITAL → Chiudi EDITAL**.
 
 Conserva la vecchia cartella: se hai progetti già salvati, segui le
 [istruzioni per recuperare i loro file](docs/windows-installer.md#progetti-e-aggiornamenti).
@@ -28,12 +28,12 @@ Questa procedura e per Windows 10/11 a 64 bit. Serve Internet per la prima prepa
 
 1. Su GitHub apri il ramo con le correzioni. Premi il pulsante verde **Code**, poi **Download ZIP**.
 2. Quando il download finisce, apri **Download** in Windows. Fai clic destro sul file scaricato e scegli **Estrai tutto**. Apri la cartella estratta.
-3. Fai doppio clic su **1-PREPARA-TALEDIT.cmd**. Se Windows chiede il permesso di installare, scegli **Si**. Attendi la scritta **Preparazione terminata**. Se viene richiesto un riavvio, riavvia Windows.
-4. Chiudi quella finestra. Fai doppio clic su **2-AVVIA-TALEDIT.cmd**. La prima volta attendi il download degli strumenti dell’app e del modello vocale. Le volte successive l’avvio sara piu rapido.
-5. Il browser si apre automaticamente su TALEDIT. Lascia aperta la finestra di avvio mentre lavori. Per terminare, chiudi la finestra di avvio.
+3. Fai doppio clic su **1-PREPARA-EDITAL.cmd**. Se Windows chiede il permesso di installare, scegli **Si**. Attendi la scritta **Preparazione terminata**. Se viene richiesto un riavvio, riavvia Windows.
+4. Chiudi quella finestra. Fai doppio clic su **2-AVVIA-EDITAL.cmd**. La prima volta attendi il download degli strumenti dell’app e del modello vocale. Le volte successive l’avvio sara piu rapido.
+5. Il browser si apre automaticamente su EDITAL. Lascia aperta la finestra di avvio mentre lavori. Per terminare, chiudi la finestra di avvio.
 6. Nell’app premi **Importa** e scegli un video dal tuo computer. Fai doppio clic sul video nello stage per inserirlo nel montaggio. Usa **Salva** per conservare il progetto; **Esporta** crea il video finale.
 
-Se Windows nasconde la parte `.cmd` del nome, vedrai soltanto `1-PREPARA-TALEDIT` e `2-AVVIA-TALEDIT`: sono gli stessi file. Eseguili solo dalla cartella estratta, non dentro lo ZIP.
+Se Windows nasconde la parte `.cmd` del nome, vedrai soltanto `1-PREPARA-EDITAL` e `2-AVVIA-EDITAL`: sono gli stessi file. Eseguili solo dalla cartella estratta, non dentro lo ZIP.
 
 Se compare un blocco di sicurezza di Windows, controlla provenienza e messaggio prima di continuare; non disattivare le protezioni. Se manca il programma di installazione di Windows, il primo file spiega come aggiornarlo dal Microsoft Store. Conserva il testo di eventuali errori.
 
@@ -45,14 +45,14 @@ L’installer unico è stato costruito e provato realmente su Windows tramite Gi
 
 YouTube diretto rimane soggetto alle restrizioni di rete. Il pulsante **Carica video locale**, presente nella finestra YouTube, consente di importare un file gia sul tuo computer. Nessun blocco viene aggirato.
 
-Effects mostra le anteprime da trascinare soltanto su EFFECTS. Clicca il mattoncino nella timeline per regolare Intensità e Velocità da 0 a 10. Per Transitions, Adjustment e BG Remover seleziona prima un video o un’immagine. Video, audio e immagini entrano soltanto nelle rispettive tracce. Se avevi scaricato una versione precedente, scarica nuovamente la cartella aggiornata e riaprila con 2-AVVIA-TALEDIT.cmd.
+Effects mostra le anteprime da trascinare soltanto su EFFECTS. Clicca il mattoncino nella timeline per regolare Intensità e Velocità da 0 a 10. Per Transitions, Adjustment e BG Remover seleziona prima un video o un’immagine. Video, audio e immagini entrano soltanto nelle rispettive tracce. Se avevi scaricato una versione precedente, scarica nuovamente la cartella aggiornata e riaprila con 2-AVVIA-EDITAL.cmd.
 
 Nella nuova versione, per i sottotitoli premi **Captions → Trascrivi audio**, correggi il testo e poi **GENERATE**: compariranno i mattoncini arancioni su TESTO. Puoi spostare le finestre dalla barra del titolo, regolare l’altezza delle piste con la maniglietta sopra il nome e salvare un fotogramma con **Screenshot**. In **Esporta** scegli prima Video, Audio o Immagine; quest’ultima richiede una clip nella pista IMMAGINI.
 
 
 Velocità: clic destro su una clip, **Velocità clip…**, scegli da −5 (25%) a +5 (400%), poi **Applica velocità**. Lo zero corrisponde al 100%. Per duplicare un livello usa il pulsante con due fogli accanto al suo nome. Con molte piste scorri nella timeline; tieni premuto **Ctrl** e muovi la rotella per ingrandire/ridurre mattoncini e piste insieme.
 
-Con **2-AVVIA-TALEDIT.cmd**, Screenshot salva automaticamente un PNG nella cartella Download di Windows e mostra una conferma nell’app. Se la cartella non è scrivibile viene usato il download del browser. Per l’avvio manuale si può configurare `SCREENSHOT_DIR`; se non è configurato, la destinazione dipende dalle impostazioni di download del browser.
+Con **2-AVVIA-EDITAL.cmd**, Screenshot salva automaticamente un PNG nella cartella Download di Windows e mostra una conferma nell’app. Se la cartella non è scrivibile viene usato il download del browser. Per l’avvio manuale si può configurare `SCREENSHOT_DIR`; se non è configurato, la destinazione dipende dalle impostazioni di download del browser.
 
 ## Aprire il mixer audio
 
@@ -70,4 +70,4 @@ Premi **COLOR**, in rosso in basso, poi scegli il video o l’immagine nel menu 
 
 ## Ricevere un video creato da Claude
 
-Con la nuova versione avviata, scollega e ricollega Claude, poi chiedigli **«Inserisci il video appena creato nella timeline di TALEDIT»**. Ora il collegamento dispone dei comandi per trasferire il file e inserirlo automaticamente con il suo audio. Se il video è soltanto un allegato nella chat, Claude deve trasferirne il contenuto: il collegamento da solo non copia gli allegati. Quando il file arriva, lo trovi nello stage e nella timeline e il cursore si sposta sulla sua anteprima.
+Con la nuova versione avviata, scollega e ricollega Claude, poi chiedigli **«Inserisci il video appena creato nella timeline di EDITAL»**. Ora il collegamento dispone dei comandi per trasferire il file e inserirlo automaticamente con il suo audio. Se il video è soltanto un allegato nella chat, Claude deve trasferirne il contenuto: il collegamento da solo non copia gli allegati. Quando il file arriva, lo trovi nello stage e nella timeline e il cursore si sposta sulla sua anteprima.

@@ -11,7 +11,7 @@ def request(route,body=None,file=None):
     data=json.dumps(body).encode() if body is not None else None
     if file:
         data=file.read_bytes();headers={'Content-Type':'application/octet-stream','x-filename':urllib.parse.quote(file.name)}
-    with urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:3000'+route,data=data,headers=headers),timeout=180) as response:
+    with urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:3001'+route,data=data,headers=headers),timeout=180) as response:
         return json.load(response)
 
 def verify_ai_cut(ffmpeg,folder):

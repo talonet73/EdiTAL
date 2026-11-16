@@ -1,4 +1,4 @@
-name: TALEDIT browser test diagnostics
+name: EDITAL browser test diagnostics
 on:
   workflow_dispatch:
     inputs:
@@ -8,7 +8,7 @@ on:
         default: '43436387460'
   push:
     branches: [main, codex/taledit-export-mcp-whisper]
-    paths: ['.github/workflows/taledit-test-report.yml']
+    paths: ['.github/workflows/edital-test-report.yml']
 permissions:
   actions: read
 jobs:
@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: TALEDIT-installed-player-tests
+          name: EDITAL-installed-player-tests
           run-id: ${{ inputs.run_id || '43436387460' }}
           github-token: ${{ github.token }}
           path: report
