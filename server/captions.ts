@@ -20,7 +20,7 @@ export function installCaptions(app: Express) {
   app.post(['/api/captions','/api/smart-cut'], async (req,res,next) => {
     try {
       const automatic=req.path==='/api/smart-cut'&&req.body?.mode==='automatic';
-      if(automatic){if(req.body.flatSilence!==true&&(typeof req.body.margin!=='number'||!Number.isFinite(req.body.margin)||req.body.margin<.2||req.body.margin>1))throw new InputError('Margine pause da 0,2 a 1 secondo.');}
+      if(automatic){if(req.body.flatSilence!==true&&(typeof req.body.margin!=='number'||!Number.isFinite(req.body.margin)||req.body.margin<.1||req.body.margin>5))throw new InputError('Margine pause da 0,1 a 5 secondi.');}
       else if(req.path==='/api/smart-cut' && (typeof req.body.tolerance!=='number'||req.body.tolerance<.5||req.body.tolerance>2))throw new InputError('Tolleranza pause da 0,5 a 2 secondi.');
       if (!Object.hasOwn(languages,req.body?.language || 'Italian')) throw new InputError('Lingua non supportata.');
       try { if(!automatic){await fs.access(path.join(modelDir(),'model.bin')); await fs.access(python());} } catch { res.status(503).json({ error:'Whisper non pronto: installa il modello con scripts/setup-whisper.sh. Il download richiede accesso a Hugging Face.' }); return; }
@@ -76,7 +76,7 @@ async function scanAutomatically(job:CaptionJob,body:any){
       const audio=await exportMedia({...body,durationSec:Math.max(.04,span),format:'wav',resolution:'720p',weightPercentage:55,audioMaster:{},subtitles:[],tracks:body.tracks?.map((t:any)=>({...t,isMuted:false,isSolo:false,audio:{}})),clips});
       file=path.join(downloadsDir,audio.fileName);
       let gain=0;if(body.flatSilence!==true){const measured=await run('ffmpeg',['-hide_banner','-i',file,'-af','volumedetect','-f','null','-']);const peak=Number(measured.stderr.match(/max_volume:\s*(-?[\d.]+) dB/)?.[1]??0);gain=Math.max(0,Math.min(60,-3-peak));}
-      const {stderr}=await run('ffmpeg',['-hide_banner','-i',file,'-af',body.flatSilence===true?'aformat=sample_fmts=flt,silencedetect=noise=-100dB:d=0.03':`volume=${gain}dB,silencedetect=noise=-40dB:d=0.1`,'-f','null','-']);
+      const {stderr}=await run('ffmpeg',['-hide_banner','-i',file,'-af',body.flatSilence===true?'aformat=sample_fmts=flt,silencedetect=noise=-100dB:d=0.03':`volume=${gain}dB,silencedetect=noise=-32dB:d=0.08`,'-f','null','-']);
       let start:number|undefined;
       for(const line of stderr.split('\n')){const a=line.match(/silence_start: (-?[\d.]+)/),b=line.match(/silence_end: ([\d.]+)/);if(a)start=Math.max(0,Number(a[1]));if(b&&start!==undefined){silences.push({start:from+start,end:from+Number(b[1])});start=undefined;}}
       if(start!==undefined)silences.push({start:from+start,end:from+span});
