@@ -122,6 +122,8 @@ export default function App() {
 
   // Tabs & Toolbars
   const [animatedCaptions,setAnimatedCaptions]=useState(true);
+  const [captionFont,setCaptionFont]=useState('Arial');
+  const [captionHighlight,setCaptionHighlight]=useState('#087f8c');
   const [activeTab, setActiveTab] = useState<string>('');
   const [isMicActive, setIsMicActive] = useState<boolean>(false);
 
@@ -974,7 +976,7 @@ export default function App() {
         onUpdate={updates => { if (!selectedClipId) return; const next=clips.map(c=>c.id===selectedClipId?{...c,...updates}:c);setClips(next);clipsRef.current=next;pushHistory(next); }}
         onAddEffect={type=>handleAddEffect(type)}
         onCrossDissolve={duration => { try { const next=applyCrossDissolve(clips,selectedClipId || '',duration);setClips(next);clipsRef.current=next;pushHistory(next); } catch(error) {setTrackConstraintWarning((error as Error).message);} }}>
-        <CaptionsPanel animated={animatedCaptions} onAnimatedChange={setAnimatedCaptions} hasGeneratedCaptions={clips.some(c=>Boolean(c.captionId))} spokenLanguage={spokenLanguage} setSpokenLanguage={setSpokenLanguage} bilingualCaptions={bilingualCaptions} setBilingualCaptions={setBilingualCaptions} deleteCurrentCaptions={deleteCurrentCaptions} setDeleteCurrentCaptions={setDeleteCurrentCaptions} subtitles={subtitles} onGenerateCaptions={handleGenerateCaptions} onInsertCaptions={()=>{try{const next=captionClips(subtitles,clips,tracks,deleteCurrentCaptions,bilingualCaptions,animatedCaptions);setClips(next.clips);clipsRef.current=next.clips;setTracks(next.tracks);tracksRef.current=next.tracks;pushHistory(next.clips,next.tracks);}catch(error){setTrackConstraintWarning((error as Error).message);}}} onUpdateSubtitle={handleUpdateSubtitle} onDeleteSubtitle={handleDeleteSubtitle}/>
+        <CaptionsPanel animated={animatedCaptions} onAnimatedChange={setAnimatedCaptions} fontFamily={captionFont} onFontChange={setCaptionFont} highlightColor={captionHighlight} onHighlightChange={setCaptionHighlight} hasGeneratedCaptions={clips.some(c=>Boolean(c.captionId))} spokenLanguage={spokenLanguage} setSpokenLanguage={setSpokenLanguage} bilingualCaptions={bilingualCaptions} setBilingualCaptions={setBilingualCaptions} deleteCurrentCaptions={deleteCurrentCaptions} setDeleteCurrentCaptions={setDeleteCurrentCaptions} subtitles={subtitles} onGenerateCaptions={handleGenerateCaptions} onInsertCaptions={()=>{try{const next=captionClips(subtitles,clips,tracks,deleteCurrentCaptions,bilingualCaptions,animatedCaptions,captionFont,captionHighlight);setClips(next.clips);clipsRef.current=next.clips;setTracks(next.tracks);tracksRef.current=next.tracks;pushHistory(next.clips,next.tracks);}catch(error){setTrackConstraintWarning((error as Error).message);}}} onUpdateSubtitle={handleUpdateSubtitle} onDeleteSubtitle={handleDeleteSubtitle}/>
       </EditingToolsPanel>}</FullscreenTools>
 
       {/* 2. Main Middle Workspace: Header + 4 Resizable Panels */}

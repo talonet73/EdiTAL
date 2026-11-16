@@ -83,6 +83,8 @@ export interface MediaAsset {
 export interface SubtitleItem {
   words?:TimedWord[];
   style?:'classic'|'karaoke';
+  fontFamily?:string;
+  highlightColor?:string;
   row?:number;
   transparency?:number;
   fadeIn?:number;

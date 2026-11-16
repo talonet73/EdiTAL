@@ -285,12 +285,13 @@ export class PlaybackEngine {
     }
     for(const subtitle of subtitles.filter(s=>time>=s.startTime && time<s.endTime)) {
       ctx.save();ctx.globalAlpha=clipAlpha({...subtitle,duration:subtitle.endTime-subtitle.startTime},time-subtitle.startTime);
-      if(subtitle.style==='karaoke'&&subtitle.words?.length){const layout=karaokeLayout({...subtitle,id:'preview'},width,height);ctx.font=`bold ${layout.font}px monospace`;ctx.textAlign='left';ctx.textBaseline='top';for(const word of layout.words){if(time>=word.startTime&&time<word.endTime){ctx.fillStyle='#087f8c';ctx.fillRect(word.x-4,word.y-4,ctx.measureText(word.text).width+8,layout.font+8);}ctx.fillStyle='white';ctx.fillText(word.text,word.x,word.y);}ctx.restore();continue;}
-      const font=Math.round(height/24),lines=subtitle.text.split('\n');
-      ctx.font=`bold ${font}px sans-serif`;ctx.textAlign='center';
-      const w=Math.min(width-20,Math.max(...lines.map(line=>ctx.measureText(line).width))+16),h=lines.length*(font+4),row=(subtitle.row||0)*font*2;
+      if(subtitle.style==='karaoke'&&subtitle.words?.length){const layout=karaokeLayout({...subtitle,id:'preview'},width,height);const font=subtitle.fontFamily||'monospace';ctx.font=`bold ${layout.font}px ${font}`;ctx.textAlign='left';ctx.textBaseline='top';const hi=subtitle.highlightColor||'#087f8c';for(const word of layout.words){if(time>=word.startTime&&time<word.endTime){ctx.fillStyle=hi;ctx.fillRect(word.x-4,word.y-4,ctx.measureText(word.text).width+8,layout.font+8);}ctx.fillStyle='white';ctx.fillText(word.text,word.x,word.y);}ctx.restore();continue;}
+      const fontSize=Math.round(height/24),lines=subtitle.text.split('\n');
+      const font=subtitle.fontFamily||'sans-serif';
+      ctx.font=`bold ${fontSize}px ${font}`;ctx.textAlign='center';
+      const w=Math.min(width-20,Math.max(...lines.map(line=>ctx.measureText(line).width))+16),h=lines.length*(fontSize+4),row=(subtitle.row||0)*fontSize*2;
       ctx.fillStyle='#000b';ctx.fillRect((width-w)/2,height-h-24-row,w,h+10);ctx.fillStyle='yellow';
-      lines.forEach((line,i)=>ctx.fillText(line,width/2,height-h-14-row+(i+1)*(font+4),width-24));ctx.restore();
+      lines.forEach((line,i)=>ctx.fillText(line,width/2,height-h-14-row+(i+1)*(fontSize+4),width-24));ctx.restore();
     }
   }
   public pauseAll() { this.mixer?.configure([],undefined,false,true); this.videoCache.forEach(v => v.pause()); this.audioCache.forEach(a => a.pause()); }

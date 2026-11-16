@@ -4,6 +4,8 @@ import { Languages, Wand2, Trash2, CheckCircle2 } from 'lucide-react';
 
 interface CaptionsPanelProps {
   animated?:boolean;onAnimatedChange?:(v:boolean)=>void;
+  fontFamily?:string;onFontChange?:(v:string)=>void;
+  highlightColor?:string;onHighlightChange?:(v:string)=>void;
   spokenLanguage: string;
   setSpokenLanguage: (lang: string) => void;
   bilingualCaptions: boolean;
@@ -20,6 +22,8 @@ interface CaptionsPanelProps {
 
 export const CaptionsPanel: React.FC<CaptionsPanelProps> = ({
   animated=false,onAnimatedChange,
+  fontFamily='Arial',onFontChange,
+  highlightColor='#087f8c',onHighlightChange,
   spokenLanguage,
   setSpokenLanguage,
   bilingualCaptions,
@@ -87,7 +91,11 @@ export const CaptionsPanel: React.FC<CaptionsPanelProps> = ({
           </button>
         </div>
 
-        {onAnimatedChange&&<label className="block text-xs my-2"><input type="checkbox" aria-label="Parola evidenziata ottanio" checked={animated} disabled={bilingualCaptions} onChange={e=>onAnimatedChange(e.target.checked)}/> Parola evidenziata ottanio (frasi brevi)<span className="block text-[10px] text-gray-400">Richiede i tempi parola di una nuova trascrizione. Se aggiungi/togli parole, il testo corretto usa lo stile classico. La traduzione usa lo stile classico.</span></label>}
+        {onAnimatedChange&&<label className="block text-xs my-2"><input type="checkbox" aria-label="Parola evidenziata" checked={animated} disabled={bilingualCaptions} onChange={e=>onAnimatedChange(e.target.checked)}/> Evidenzia parola corrente (karaoke)<span className="block text-[10px] text-gray-400">Richiede i tempi parola di una nuova trascrizione. Se aggiungi/togli parole, il testo corretto usa lo stile classico. La traduzione usa lo stile classico.</span></label>}
+
+        {onFontChange&&<div className="mb-2"><label className="block text-xs font-medium text-gray-300 mb-1">Font sottotitoli</label><select aria-label="Font sottotitoli" value={fontFamily} onChange={e=>onFontChange(e.target.value)} className="w-full bg-[#1f2638] border border-[#2e384d] text-xs text-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-cyan-500"><option value="Arial">Arial</option><option value="Times New Roman">Times New Roman</option><option value="Georgia">Georgia</option><option value="Verdana">Verdana</option><option value="Courier New">Courier New</option><option value="Impact">Impact</option><option value="Comic Sans MS">Comic Sans MS</option><option value="Trebuchet MS">Trebuchet MS</option><option value="Palatino">Palatino</option></select></div>}
+
+        {onHighlightChange&&animated&&<div className="mb-2"><label className="block text-xs font-medium text-gray-300 mb-1">Colore evidenziazione</label><select aria-label="Colore evidenziazione" value={highlightColor} onChange={e=>onHighlightChange(e.target.value)} className="w-full bg-[#1f2638] border border-[#2e384d] text-xs text-gray-200 rounded px-2.5 py-1.5 focus:outline-none focus:border-cyan-500"><option value="#087f8c">Ottanio (default)</option><option value="#1e3a8a">Blu navy</option><option value="#000000">Nero</option><option value="#7f1d1d">Bordeaux</option><option value="#9a3412">Arancione scuro</option></select></div>}
         {/* Subtitles list or empty state */}
         <div className="max-h-48 overflow-y-auto space-y-2 pr-1">
           {subtitles.length === 0 ? (

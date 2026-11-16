@@ -199,9 +199,22 @@ export async function exportMedia(body: any, options:{screenshot?:boolean}={}) {
       const subtitles: SubtitleItem[] = body.clips.some((c:TimelineClip)=>c.type==='text')?timelineSubtitles(clips):body.subtitles || [];
       if (!Array.isArray(subtitles) || subtitles.length > 2000) throw new InputError('Sottotitoli non validi.');
       let font='';
+      const fontMap:Record<string,string[]>={
+        'Arial':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','arial.ttf'),'/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf'],
+        'Times New Roman':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','times.ttf'),'/usr/share/fonts/truetype/liberation2/LiberationSerif-Regular.ttf'],
+        'Georgia':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','georgia.ttf')],
+        'Verdana':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','verdana.ttf')],
+        'Courier New':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','cour.ttf'),'/usr/share/fonts/truetype/liberation2/LiberationMono-Regular.ttf'],
+        'Impact':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','impact.ttf')],
+        'Comic Sans MS':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','comic.ttf')],
+        'Trebuchet MS':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','trebuc.ttf')],
+        'Palatino':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','pala.ttf')],
+      };
       if(subtitles.length) {
-        const candidates=[path.join(process.env.WINDIR || 'C:\\Windows','Fonts','arial.ttf'),'/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf','/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf','/System/Library/Fonts/Supplemental/Arial.ttf'];
+        const preferred=subtitles[0]?.fontFamily||'Arial';
+        const candidates=fontMap[preferred]||fontMap['Arial'];
         for(const candidate of candidates) {try {await fs.copyFile(candidate,path.join(temp,'font.ttf'));font=":fontfile='font.ttf'";break;}catch{/* Try the next platform font. */}}
+        if(!font){const fallback=[path.join(process.env.WINDIR || 'C:\\Windows','Fonts','arial.ttf'),'/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf','/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf','/System/Library/Fonts/Supplemental/Arial.ttf'];for(const candidate of fallback) {try {await fs.copyFile(candidate,path.join(temp,'font.ttf'));font=":fontfile='font.ttf'";break;}catch{}}}
       }
       let monoFont=font;
       if(subtitles.some(s=>s.style==='karaoke')){for(const candidate of [path.join(process.env.WINDIR||'C:\\Windows','Fonts','consolab.ttf'),'/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf','/usr/share/fonts/truetype/liberation2/LiberationMono-Bold.ttf','/System/Library/Fonts/Menlo.ttc']){try{await fs.copyFile(candidate,path.join(temp,'mono.ttf'));monoFont=":fontfile='mono.ttf'";break;}catch{}}}
@@ -210,12 +223,13 @@ export async function exportMedia(body: any, options:{screenshot?:boolean}={}) {
         const start = number(sub.startTime, 0, 0, 86400), end = number(sub.endTime, 0, start, 86400);
         const opacity=number(sub.transparency,100,0,100)/100,fadeIn=number(sub.fadeIn,0,0,600),fadeOut=number(sub.fadeOut,0,0,600),row=Math.floor(number(sub.row,0,0,99));
         const alpha=`${opacity}*max(0,min(1,min(${fadeIn?`(t-${start})/${fadeIn}`:'1'},${fadeOut?`(${end}-t)/${fadeOut}`:'1'})))`;
+        const hi=(sub.highlightColor||'#087f8c').replace('#','0x');
         try{validateWords(sub);}catch(error){throw new InputError((error as Error).message);}
         if(sub.style==='karaoke'&&sub.words?.length){
           const layout=karaokeLayout(sub,width,height);let current=layer;
           for(const [wi,word] of layout.words.entries()){
             const file=`kw${i}_${wi}.txt`;await fs.writeFile(path.join(temp,file),word.text);const tag=`kt${i}_${wi}`;filters.push(`[${current}]drawtext=textfile='${file}'${monoFont}:expansion=none:fontsize=${layout.font}:fontcolor=white:x=${word.x}:y=${word.y}:alpha='${alpha}':enable='gte(t,${start})*lt(t,${end})'[${tag}]`);current=tag;
-            const startWord=Math.max(start,word.startTime),endWord=Math.min(end,word.endTime);if(endWord>startWord){const active=`ka${i}_${wi}`;filters.push(`[${current}]drawtext=textfile='${file}'${monoFont}:expansion=none:fontsize=${layout.font}:fontcolor=white:box=1:boxcolor=0x087f8c@0.95:boxborderw=4:x=${word.x}:y=${word.y}:alpha='${alpha}':enable='gte(t,${startWord})*lt(t,${endWord})'[${active}]`);current=active;}
+            const startWord=Math.max(start,word.startTime),endWord=Math.min(end,word.endTime);if(endWord>startWord){const active=`ka${i}_${wi}`;filters.push(`[${current}]drawtext=textfile='${file}'${monoFont}:expansion=none:fontsize=${layout.font}:fontcolor=white:box=1:boxcolor=${hi}@0.95:boxborderw=4:x=${word.x}:y=${word.y}:alpha='${alpha}':enable='gte(t,${startWord})*lt(t,${endWord})'[${active}]`);current=active;}
           }layer=current;continue;
         }
         const textPath = path.join(temp, `${i}.txt`);
