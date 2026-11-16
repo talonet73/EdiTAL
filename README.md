@@ -4,6 +4,8 @@
 
 Editor video locale con React, Express, FFmpeg e strumenti MCP per Claude e ChatGPT.
 
+**Aggiornamento UI 16 novembre 2026**: interfaccia resa più glossy e accattivante con glassmorphism, gradienti premium, glow sugli elementi attivi, scrollbars luminose e hover effects. Tema dark migliorato mantenendo piena compatibilità funzionale.
+
 ## Versione completa ripristinata
 
 Base verificabile: `0796d05c4887cd4ec3726bbde6a24f240a6baf4a`, ultimo commit del ramo
