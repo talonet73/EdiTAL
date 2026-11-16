@@ -214,6 +214,16 @@ export const MediaLibraryPanel: React.FC<MediaLibraryPanelProps> = ({
                         src={item.thumbnailUrl}
                         alt={item.name}
                         className="w-full h-full object-cover"
+                        onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                    ) : isVideo && item.fileUrl ? (
+                      <video
+                        src={item.fileUrl.startsWith('/media_downloads/') ? `/api/media-preview/${encodeURIComponent(item.fileUrl.slice('/media_downloads/'.length))}` : item.fileUrl}
+                        muted
+                        playsInline
+                        preload="metadata"
+                        className="w-full h-full object-cover pointer-events-none"
+                        onLoadedData={e => { try { e.currentTarget.currentTime = Math.min(1, (e.currentTarget.duration || 2) * 0.1); } catch {} }}
                       />
                     ) : isAudio ? (
                       <div className="flex flex-col items-center justify-center text-emerald-400">
