@@ -913,7 +913,7 @@ export default function App() {
   const selectedClip = clips.find(c => c.id === selectedClipId) || null;
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#090d16] text-[#e2e8f0] font-sans antialiased select-none">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-gradient-to-b from-[#0f172a] to-[#020617] text-[#e2e8f0] font-sans antialiased select-none">
       {mediaImportProgress && <p role="status" className="fixed top-16 right-4 z-[100] rounded bg-slate-800 p-3 text-sm text-cyan-200">{mediaImportProgress}</p>}
       {/* Hidden file input for opening .tal projects */}
       <input

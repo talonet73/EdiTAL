@@ -79,7 +79,7 @@ export const TopNav: React.FC<TopNavProps> = ({
   const tabs = [{label:'Effects',icon:WandSparkles},{label:'Transitions',icon:Blend},{label:'Captions',icon:Captions},{label:'Adjustment',icon:SlidersHorizontal},{label:'BG Remover',icon:ScanLine},{label:'AI Cut',icon:ScissorsLineDashed},{label:'Pen Mask',icon:PenTool}];
 
   return (
-    <div className="bg-[#0b0f19] border-b border-[#1e293b] select-none text-[#e2e8f0] text-xs">
+    <div className="bg-[#0b0f19]/90 backdrop-blur-md border-b border-[#1e293b]/50 select-none text-[#e2e8f0] text-xs shadow-lg">
       {/* Top Menu Bar */}
       <div className="flex items-center justify-between px-3 py-1 border-b border-[#182234]">
         <div className="flex items-center gap-4">
