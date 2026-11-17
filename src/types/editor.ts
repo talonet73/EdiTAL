@@ -43,6 +43,8 @@ export interface TimelineClip {
   highlightColor?:string;
   wordSpacing?:number;
   lineSpacing?:number;
+  positionX?:number; // 0-1 relative, default 0.5 center
+  positionY?:number; // 0-1 relative, default ~0.85 bottom
   mask?:import('../services/penMask').PenMask;
   adjustments?: Adjustments;
   colorGrade?: import('../services/colorGrade').ColorGrade;

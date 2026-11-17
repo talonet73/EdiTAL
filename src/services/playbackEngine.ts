@@ -290,16 +290,23 @@ export class PlaybackEngine {
       const font=subtitle.fontFamily||'Arial';
       const ls=subtitle.lineSpacing??1;
       const ws=subtitle.wordSpacing??1;
+      const px=(subtitle as any).positionX ?? 0.5;
+      const py=(subtitle as any).positionY ?? 0.85;
       ctx.font=`bold ${fontSize}px ${font}`;ctx.textAlign='center';
       const lineHeight=fontSize*(0.9+ls*0.3);
       const measured=lines.map(line=>{const words=line.split(/\s+/);let width=0;for(const w of words)width+=ctx.measureText(w).width;width+=Math.max(0,words.length-1)*fontSize*0.2*ws;return width;});
-      const w=Math.min(width-20,Math.max(...measured)+16),h=lines.length*lineHeight,row=(subtitle.row||0)*fontSize*2;
-      ctx.fillStyle='#000b';ctx.fillRect((width-w)/2,height-h-24-row,w,h+10);ctx.fillStyle='yellow';
+      const w=Math.min(width-20,Math.max(...measured)+16),h=lines.length*lineHeight;
+      const cx=px*width, cy=py*height;
+      // Magnetic snap to center guides (invisible)
+      const snap=18;
+      const snappedX=Math.abs(cx-width/2)<snap?width/2:cx;
+      const snappedY=Math.abs(cy-height/2)<snap?height/2:cy;
+      ctx.fillStyle='#000b';ctx.fillRect(snappedX-w/2,snappedY-h/2,w,h+10);ctx.fillStyle='yellow';
       lines.forEach((line,i)=>{
         const words=line.split(/\s+/);
         let total=0;for(const ww of words)total+=ctx.measureText(ww).width;total+=Math.max(0,words.length-1)*fontSize*0.2*ws;
-        let x=(width-total)/2;
-        const y=height-h-14-row+(i+1)*lineHeight;
+        let x=snappedX-total/2;
+        const y=snappedY-h/2+(i+1)*lineHeight;
         for(const ww of words){ctx.fillText(ww,x+ctx.measureText(ww).width/2,y);x+=ctx.measureText(ww).width+fontSize*0.2*ws;}
       });ctx.restore();
     }
