@@ -144,7 +144,8 @@ button[aria-pressed=true],
 .color-control-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 12px; }
 .color-wheels { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
 .color-wheel-group { text-align: center; }
-.color-wheel { width: 140px; height: 140px; margin: 8px auto; border-radius: 50%; background: conic-gradient(from 0deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); position: relative; cursor: crosshair; border: 3px solid #1a0f1e; }
+.audio-knob { cursor: ns-resize; touch-action: none; }
+.color-wheel { cursor: crosshair; touch-action: none; }
 .color-wheel span { position: absolute; width: 14px; height: 14px; background: #fff; border: 2px solid #000; border-radius: 50%; transform: translate(-50%,-50%); pointer-events: none; }
 .color-scopes { width: 340px; flex-shrink: 0; background: rgba(20,12,24,0.8); border-radius: 10px; border: 1px solid #4c1d4d; padding: 10px; display: flex; flex-direction: column; }
 .color-scope-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; }

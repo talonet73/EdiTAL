@@ -1039,6 +1039,7 @@ export default function App() {
               aspectRatio={aspectRatio}
               setAspectRatio={setAspectRatio}
               penActive={activeTab==='Pen Mask'} selectedClip={selectedClip} onUpdateMask={mask=>{if(selectedClip){setIsPlaying(false);const next=clips.map(c=>c.id===selectedClip.id?{...c,mask}:c);setClips(next);clipsRef.current=next;pushHistory(next);}}}
+              onUpdateClip={(id,patch)=>{const next=clips.map(c=>c.id===id?{...c,...patch}:c);setClips(next);clipsRef.current=next;pushHistory(next);}}
               tracks={tracks} audioMaster={audioMaster}
               clips={activeTimelineClips(clips, tracks)}
               subtitles={timelineSubtitles(activeTimelineClips(clips,tracks))}

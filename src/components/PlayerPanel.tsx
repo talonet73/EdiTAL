@@ -17,6 +17,7 @@ import { TimelineClip, SubtitleItem } from '../types/editor';
 
 interface PlayerPanelProps {
   penActive?:boolean;selectedClip?:TimelineClip|null;onUpdateMask?:(m:PenMask|undefined)=>void;
+  onUpdateClip?:(id:string,patch:Partial<TimelineClip>)=>void;
   tracks?: import('../types/editor').Track[];
   audioMaster?:import('../services/audioMixer').AudioSettings;
   currentTime: number;
@@ -33,7 +34,7 @@ interface PlayerPanelProps {
 }
 
 export const PlayerPanel: React.FC<PlayerPanelProps> = ({
-  tracks=[],audioMaster,penActive=false,selectedClip,onUpdateMask,
+  tracks=[],audioMaster,penActive=false,selectedClip,onUpdateMask,onUpdateClip,
   currentTime,
   totalDuration,
   isPlaying,
@@ -198,6 +199,22 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({
         <div data-testid="player-frame" style={{width:fittedWidth,height:fittedWidth/ratio}} className="relative shrink-0 flex items-center justify-center shadow-2xl rounded border border-[#1e293b] bg-black overflow-hidden">
           <canvas data-testid="player-canvas"
             ref={canvasRef}
+            style={{width:'100%',height:'100%',cursor:'pointer'}}
+            onPointerDown={e=>{
+              const canvas=canvasRef.current; if(!canvas)return;
+              const rect=canvas.getBoundingClientRect();
+              const x=(e.clientX-rect.left)/rect.width;
+              const y=(e.clientY-rect.top)/rect.height;
+              // Snap to center if close
+              const snap=0.04;
+              const sx=Math.abs(x-0.5)<snap?0.5:x;
+              const sy=Math.abs(y-0.5)<snap?0.5:y;
+              // Update active subtitle position (first matching text clip at current time)
+              const active=clips.find(c=>c.type==='text' && currentTime>=c.startTime && currentTime<c.startTime+c.duration);
+              if(active && onUpdateClip){
+                onUpdateClip(active.id,{positionX:sx,positionY:sy});
+              }
+            }}
             width={penActive?(aspectRatio==='9:16'?405:aspectRatio==='1:1'?720:aspectRatio==='4:3'?960:1280):aspectRatio === '9:16' ? 360 : aspectRatio === '1:1' ? 360 : aspectRatio === '4:3' ? 480 : 640}
             height={penActive?720:aspectRatio === '9:16' ? 640 : 360}
             className="w-full h-full object-contain"
