@@ -1078,8 +1078,9 @@ export default function App() {
           onSolo={handleToggleTrackSolo} onMute={handleToggleTrackMute} onAdd={()=>handleAddTrack('audio',`AUDIO ${tracks.filter(t=>t.type==='audio').length+1}`)}/>
       </div>}
 
-      {workspace==='color' && <ColorPanel clips={activeTimelineClips(clips,tracks)} selectedId={selectedClipId} currentTime={currentTime} duration={totalDuration} playing={isPlaying} aspectRatio={aspectRatio} onSelect={id=>{setSelectedClipId(id);setSelectedClipIds([id]);}} onSeek={setCurrentTime} onPlay={()=>setIsPlaying(p=>!p)} onUpdate={(id,colorGrade)=>{const next=clips.map(c=>c.id===id?{...c,colorGrade}:c);setClips(next);clipsRef.current=next;pushHistory(next);}}/>}
+      {workspace==='color' && <div className="flex-1 min-h-0 flex flex-col"><ColorPanel clips={activeTimelineClips(clips,tracks)} selectedId={selectedClipId} currentTime={currentTime} duration={totalDuration} playing={isPlaying} aspectRatio={aspectRatio} onSelect={id=>{setSelectedClipId(id);setSelectedClipIds([id]);}} onSeek={setCurrentTime} onPlay={()=>setIsPlaying(p=>!p)} onUpdate={(id,colorGrade)=>{const next=clips.map(c=>c.id===id?{...c,colorGrade}:c);setClips(next);clipsRef.current=next;pushHistory(next);}}/></div>}
 
+      {workspace!=='color' && <>
       {/* Draggable Divider 4 (Workspace / Timeline) */}
       <div
         onMouseDown={e => {
@@ -1126,6 +1127,7 @@ export default function App() {
           onDeleteClip={handleDeleteClip}
         />
       </div>
+      </>}
 
       <nav className="workspace-tabs" role="tablist" aria-label="Sezione di lavoro">
         <button role="tab" aria-selected={workspace==='video'} className="video-tab" onClick={()=>{setWorkspace('video');setSelectedClipId(null);setSelectedClipIds([]);}}>VIDEO</button>
