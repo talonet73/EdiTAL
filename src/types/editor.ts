@@ -39,6 +39,10 @@ export interface TimelineClip {
   captionId?: string;
   captionWords?:TimedWord[]; // source-relative within the original text clip
   captionStyle?:'classic'|'karaoke';
+  fontFamily?:string;
+  highlightColor?:string;
+  wordSpacing?:number;
+  lineSpacing?:number;
   mask?:import('../services/penMask').PenMask;
   adjustments?: Adjustments;
   colorGrade?: import('../services/colorGrade').ColorGrade;
@@ -85,6 +89,8 @@ export interface SubtitleItem {
   style?:'classic'|'karaoke';
   fontFamily?:string;
   highlightColor?:string;
+  wordSpacing?:number;
+  lineSpacing?:number;
   row?:number;
   transparency?:number;
   fadeIn?:number;

@@ -212,14 +212,13 @@ export async function exportMedia(body: any, options:{screenshot?:boolean}={}) {
       let font='';
       const fontMap:Record<string,string[]>={
         'Arial':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','arial.ttf'),'/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf'],
-        'Times New Roman':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','times.ttf'),'/usr/share/fonts/truetype/liberation2/LiberationSerif-Regular.ttf'],
-        'Georgia':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','georgia.ttf')],
+        'Segoe UI':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','segoeui.ttf')],
+        'Calibri':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','calibri.ttf')],
         'Verdana':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','verdana.ttf')],
-        'Courier New':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','cour.ttf'),'/usr/share/fonts/truetype/liberation2/LiberationMono-Regular.ttf'],
-        'Impact':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','impact.ttf')],
-        'Comic Sans MS':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','comic.ttf')],
-        'Trebuchet MS':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','trebuc.ttf')],
-        'Palatino':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','pala.ttf')],
+        'Tahoma':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','tahoma.ttf')],
+        'Georgia':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','georgia.ttf')],
+        'Times New Roman':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','times.ttf'),'/usr/share/fonts/truetype/liberation2/LiberationSerif-Regular.ttf'],
+        'Consolas':[path.join(process.env.WINDIR||'C:\\Windows','Fonts','consola.ttf')],
       };
       if(subtitles.length) {
         const preferred=subtitles[0]?.fontFamily||'Arial';
@@ -244,9 +243,12 @@ export async function exportMedia(body: any, options:{screenshot?:boolean}={}) {
           }layer=current;continue;
         }
         const textPath = path.join(temp, `${i}.txt`);
-        await fs.writeFile(textPath, sub.text);
+        const ws=sub.wordSpacing??1;
+        const spaced=sub.text.split('\n').map(line=>line.split(/\s+/).join(' '.repeat(Math.max(1,Math.round(ws*2))))).join('\n');
+        await fs.writeFile(textPath, spaced);
         const next = `sub${i}`;
-        filters.push(`[${layer}]drawtext=textfile='${i}.txt'${font}:expansion=none:fontsize=${Math.round(height / 24)}:fontcolor=yellow:box=1:boxcolor=black@0.75:boxborderw=8:x=(w-text_w)/2:y=h-text_h-30-${row*Math.round(height/24)*2}:alpha='${alpha}':enable='gte(t,${start})*lt(t,${end})'[${next}]`); layer = next;
+        const ls=Math.round((sub.lineSpacing??1)*8);
+        filters.push(`[${layer}]drawtext=textfile='${i}.txt'${font}:expansion=none:fontsize=${Math.round(height / 24)}:fontcolor=yellow:box=1:boxcolor=black@0.75:boxborderw=8:line_spacing=${ls}:x=(w-text_w)/2:y=h-text_h-30-${row*Math.round(height/24)*2}:alpha='${alpha}':enable='gte(t,${start})*lt(t,${end})'[${next}]`); layer = next;
       }
     }
     // Load the graph from a file using FFmpeg's current option-file syntax. The

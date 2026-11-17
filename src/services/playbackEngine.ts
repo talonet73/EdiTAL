@@ -285,13 +285,23 @@ export class PlaybackEngine {
     }
     for(const subtitle of subtitles.filter(s=>time>=s.startTime && time<s.endTime)) {
       ctx.save();ctx.globalAlpha=clipAlpha({...subtitle,duration:subtitle.endTime-subtitle.startTime},time-subtitle.startTime);
-      if(subtitle.style==='karaoke'&&subtitle.words?.length){const layout=karaokeLayout({...subtitle,id:'preview'},width,height);const font=subtitle.fontFamily||'monospace';ctx.font=`bold ${layout.font}px ${font}`;ctx.textAlign='left';ctx.textBaseline='top';const hi=subtitle.highlightColor||'#087f8c';for(const word of layout.words){if(time>=word.startTime&&time<word.endTime){ctx.fillStyle=hi;ctx.fillRect(word.x-4,word.y-4,ctx.measureText(word.text).width+8,layout.font+8);}ctx.fillStyle='white';ctx.fillText(word.text,word.x,word.y);}ctx.restore();continue;}
+      if(subtitle.style==='karaoke'&&subtitle.words?.length){const layout=karaokeLayout({...subtitle,id:'preview'},width,height);const font=subtitle.fontFamily||'Arial';const ws=subtitle.wordSpacing??1;ctx.font=`bold ${layout.font}px ${font}`;ctx.textAlign='left';ctx.textBaseline='top';const hi=subtitle.highlightColor||'#087f8c';let x=layout.words[0]?.x??0;for(const word of layout.words){const w=ctx.measureText(word.text).width;if(time>=word.startTime&&time<word.endTime){ctx.fillStyle=hi;ctx.fillRect(x-4,word.y-4,w+8,layout.font+8);}ctx.fillStyle='white';ctx.fillText(word.text,x,word.y);x+=w+layout.font*0.25*ws;}ctx.restore();continue;}
       const fontSize=Math.round(height/24),lines=subtitle.text.split('\n');
-      const font=subtitle.fontFamily||'sans-serif';
+      const font=subtitle.fontFamily||'Arial';
+      const ls=subtitle.lineSpacing??1;
+      const ws=subtitle.wordSpacing??1;
       ctx.font=`bold ${fontSize}px ${font}`;ctx.textAlign='center';
-      const w=Math.min(width-20,Math.max(...lines.map(line=>ctx.measureText(line).width))+16),h=lines.length*(fontSize+4),row=(subtitle.row||0)*fontSize*2;
+      const lineHeight=fontSize*(0.9+ls*0.3);
+      const measured=lines.map(line=>{const words=line.split(/\s+/);let width=0;for(const w of words)width+=ctx.measureText(w).width;width+=Math.max(0,words.length-1)*fontSize*0.2*ws;return width;});
+      const w=Math.min(width-20,Math.max(...measured)+16),h=lines.length*lineHeight,row=(subtitle.row||0)*fontSize*2;
       ctx.fillStyle='#000b';ctx.fillRect((width-w)/2,height-h-24-row,w,h+10);ctx.fillStyle='yellow';
-      lines.forEach((line,i)=>ctx.fillText(line,width/2,height-h-14-row+(i+1)*(fontSize+4),width-24));ctx.restore();
+      lines.forEach((line,i)=>{
+        const words=line.split(/\s+/);
+        let total=0;for(const ww of words)total+=ctx.measureText(ww).width;total+=Math.max(0,words.length-1)*fontSize*0.2*ws;
+        let x=(width-total)/2;
+        const y=height-h-14-row+(i+1)*lineHeight;
+        for(const ww of words){ctx.fillText(ww,x+ctx.measureText(ww).width/2,y);x+=ctx.measureText(ww).width+fontSize*0.2*ws;}
+      });ctx.restore();
     }
   }
   public pauseAll() { this.mixer?.configure([],undefined,false,true); this.videoCache.forEach(v => v.pause()); this.audioCache.forEach(a => a.pause()); }
