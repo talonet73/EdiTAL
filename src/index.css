@@ -164,3 +164,41 @@ button[aria-pressed=true],
   border-radius: 10px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
+
+/* COLOR: tasti Ruote/Primarie/Curve, Bypass/Reset, ruote colorate, canali curva */
+.color-controls > header { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 10px 12px; border-bottom: 1px solid #4c1d4d; background: rgba(30,15,35,0.6); }
+.color-controls [role=tablist] { display: flex; gap: 6px; padding: 3px; background: #12081a; border: 1px solid #3b1d4a; border-radius: 999px; }
+.color-tab-btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: .02em; color: #d8b4fe; background: transparent; border: 1px solid transparent; cursor: pointer; }
+.color-tab-btn:hover { color: #fff; background: rgba(236,72,153,0.12); }
+.color-tab-btn[aria-selected=true] { color: #fff; background: linear-gradient(135deg,#9d174d,#ec4899); border-color: #f9a8d4; box-shadow: 0 0 14px rgba(236,72,153,0.45); }
+.color-actions { display: flex; gap: 6px; }
+.color-action-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 8px; font-size: 11px; font-weight: 700; color: #f5d0fe; background: #1f0f28; border: 1px solid #6b2b6e; cursor: pointer; }
+.color-action-btn:hover { border-color: #ec4899; color: #fff; }
+.color-action-btn[aria-pressed=true] { background: #7c2d12; border-color: #fb923c; color: #ffedd5; box-shadow: 0 0 10px rgba(251,146,60,0.45); }
+.color-wheel-group { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.color-wheel-group > strong { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #f9a8d4; }
+.color-wheel { position: relative; width: 132px; height: 132px; border-radius: 50%; flex-shrink: 0;
+  background: radial-gradient(circle, rgba(128,128,128,1) 0%, rgba(128,128,128,.85) 18%, rgba(128,128,128,0) 72%),
+              conic-gradient(from 0deg, #ff3b3b, #ffd23b, #5bff3b, #3bffd8, #3b6bff, #c43bff, #ff3b3b);
+  border: 3px solid #2a1433; box-shadow: 0 0 0 1px #6b2b6e, 0 6px 16px #0009, inset 0 0 18px #0007; }
+.color-wheel::before, .color-wheel::after { content: ''; position: absolute; background: rgba(0,0,0,.35); pointer-events: none; }
+.color-wheel::before { left: 50%; top: 8%; bottom: 8%; width: 1px; }
+.color-wheel::after { top: 50%; left: 8%; right: 8%; height: 1px; }
+.color-wheel:focus-visible { outline: 2px solid #f472b6; outline-offset: 3px; }
+.color-wheel span { z-index: 1; box-shadow: 0 0 6px #000; }
+.color-wheel-knobs { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 6px; width: 100%; }
+.color-wheel-knobs .audio-knob { width: 36px; height: 36px; }
+.color-wheel-knobs .audio-knob i:before { left: 14px; height: 10px; }
+.color-primary-knobs { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 16px 8px; }
+.color-curves { display: flex; flex-direction: column; gap: 10px; }
+.color-curves svg { width: 100%; max-height: 260px; border-radius: 8px; }
+.color-curves .curve-master { color: #f8fafc; } .color-curves .curve-red { color: #f87171; } .color-curves .curve-green { color: #4ade80; } .color-curves .curve-blue { color: #60a5fa; }
+.color-curve-channels { display: flex; gap: 6px; flex-wrap: wrap; }
+.curve-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #e9d5ff; background: #1a0d22; border: 1px solid #4c1d4d; cursor: pointer; }
+.curve-chip i { width: 10px; height: 10px; border-radius: 50%; background: linear-gradient(135deg,#f87171,#4ade80,#60a5fa); }
+.curve-chip-red i { background: #ef4444; } .curve-chip-green i { background: #22c55e; } .curve-chip-blue i { background: #3b82f6; }
+.curve-chip[aria-checked=true] { color: #fff; border-color: #f472b6; background: #3b1340; box-shadow: 0 0 10px rgba(236,72,153,0.35); }
+.color-curve-points { display: flex; gap: 8px; flex-wrap: wrap; font-size: 10px; color: #d8b4fe; }
+.color-curve-points label { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.color-curve-points input { width: 48px; background: #12081a; color: #fbcfe8; text-align: center; border-radius: 4px; padding: 2px; border: 1px solid #3b1d4a; }
+.color-curves > button { align-self: flex-start; padding: 5px 11px; border-radius: 8px; font-size: 11px; font-weight: 700; color: #f5d0fe; background: #1f0f28; border: 1px solid #6b2b6e; }

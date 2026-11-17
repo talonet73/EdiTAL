@@ -50,10 +50,11 @@ async function transcribe(job: CaptionJob, body: any) {
 
 async function transcribeAudio(audioFile:string,body:any){
   return await new Promise<string>((resolve,reject)=>{
-      const child=spawn(python(),[path.resolve('scripts/transcribe.py')],{stdio:['pipe','pipe','pipe'],env:{...process.env,WHISPER_MODEL_DIR:modelDir()}});
-      let stdout='',stderr='';const timer=setTimeout(()=>child.kill('SIGTERM'),30*60*1000);
-      child.stdout.on('data',d=>{stdout+=d.toString();if(stdout.length>5*1024*1024)child.kill('SIGTERM');});child.stderr.on('data',d=>{stderr=(stderr+d.toString()).slice(-4000);});
-      child.on('error',e=>{clearTimeout(timer);reject(e);});child.on('close',code=>{clearTimeout(timer);code===0?resolve(stdout):reject(new Error(stderr||'Trascrizione interrotta.'));});
+      const child=spawn(python(),[path.resolve('scripts/transcribe.py')],{stdio:['pipe','pipe','pipe'],env:{...process.env,WHISPER_MODEL_DIR:modelDir(),PYTHONIOENCODING:'utf-8',PYTHONUTF8:'1'}});
+      // UTF-8 forzato: su Windows Python scriverebbe in cp1252 e le lettere accentate (à è ì ò ù) diventerebbero simboli.
+      const chunks:Buffer[]=[];let size=0,stderr='';const timer=setTimeout(()=>child.kill('SIGTERM'),30*60*1000);
+      child.stdout.on('data',(d:Buffer)=>{chunks.push(d);size+=d.length;if(size>5*1024*1024)child.kill('SIGTERM');});child.stderr.on('data',d=>{stderr=(stderr+d.toString()).slice(-4000);});
+      child.on('error',e=>{clearTimeout(timer);reject(e);});child.on('close',code=>{clearTimeout(timer);code===0?resolve(Buffer.concat(chunks).toString('utf8')):reject(new Error(stderr||'Trascrizione interrotta.'));});
       child.stdin.on('error',()=>{}); child.stdin.end(JSON.stringify({file:audioFile,language:languages[body.language || 'Italian'] || null,bilingual:body.bilingual===true}));
     });
 }

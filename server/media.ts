@@ -248,7 +248,10 @@ export async function exportMedia(body: any, options:{screenshot?:boolean}={}) {
         await fs.writeFile(textPath, spaced);
         const next = `sub${i}`;
         const ls=Math.round((sub.lineSpacing??1)*8);
-        filters.push(`[${layer}]drawtext=textfile='${i}.txt'${font}:expansion=none:fontsize=${Math.round(height / 24)}:fontcolor=yellow:box=1:boxcolor=black@0.75:boxborderw=8:line_spacing=${ls}:x=(w-text_w)/2:y=h-text_h-30-${row*Math.round(height/24)*2}:alpha='${alpha}':enable='gte(t,${start})*lt(t,${end})'[${next}]`); layer = next;
+        // Posizione trascinata sul monitor (centro 0-1), come nell'anteprima; altrimenti posizione predefinita in basso.
+        const pos=(v:unknown)=>typeof v==='number'&&Number.isFinite(v)?Math.min(1,Math.max(0,v)):undefined,px=pos(sub.positionX),py=pos(sub.positionY);
+        const placement=`x=${px===undefined?'(w-text_w)/2':`'max(0,min(w-text_w,${px}*w-text_w/2))'`}:y=${py===undefined?`h-text_h-30-${row*Math.round(height/24)*2}`:`'max(0,min(h-text_h,${py}*h-text_h/2))'`}`;
+        filters.push(`[${layer}]drawtext=textfile='${i}.txt'${font}:expansion=none:fontsize=${Math.round(height / 24)}:fontcolor=yellow:box=1:boxcolor=black@0.75:boxborderw=8:line_spacing=${ls}:${placement}:alpha='${alpha}':enable='gte(t,${start})*lt(t,${end})'[${next}]`); layer = next;
       }
     }
     // Load the graph from a file using FFmpeg's current option-file syntax. The

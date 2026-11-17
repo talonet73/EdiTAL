@@ -39,7 +39,8 @@ export const DetailsPanel: React.FC<DetailsPanelProps> = ({
               />
             </div>
 
-            {selectedClip.type==='text' && <label className="block">Testo della clip<textarea aria-label="Testo della clip" value={selectedClip.text || ''} onChange={e=>onUpdateClip({text:e.target.value,name:e.target.value.slice(0,35)})} className="w-full p-2 mt-2 bg-orange-950 rounded"/></label>}
+            {selectedClip.type==='text' && selectedClip.segments && <p className="text-xs text-orange-200">Sottotitoli uniti: trascinali sul monitor per spostarli tutti insieme. Per correggere un testo usa tasto destro › Separa i sottotitoli uniti.</p>}
+            {selectedClip.type==='text' && !selectedClip.segments && <label className="block">Testo della clip<textarea aria-label="Testo della clip" value={selectedClip.text || ''} onChange={e=>onUpdateClip({text:e.target.value,name:e.target.value.slice(0,35)})} className="w-full p-2 mt-2 bg-orange-950 rounded"/></label>}
             {/* TIPO */}
             <div>
               <span className="block text-[10px] uppercase font-bold text-gray-400 tracking-wider">
