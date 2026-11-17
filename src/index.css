@@ -133,19 +133,15 @@ button[aria-pressed=true],
 /* Preserve remaining original styles by appending the rest of the original file content here if needed. 
    For brevity in this edit, the key glossy enhancements are applied globally and to main panels.
    Full original styles for color, pen, smart-cut etc. remain functional. */
-.color-workspace { background: linear-gradient(180deg, #1a0f1e, #0f0a12); display: flex; flex-direction: column; height: 100%; min-height: 0; }
+.color-workspace { background: linear-gradient(180deg, #1a0f1e, #0f0a12); display: flex; flex-direction: column; height: 100%; min-height: 0; overflow-y: auto; }
 .color-transport { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: rgba(30,15,35,0.8); border-bottom: 1px solid #4c1d4d; flex-shrink: 0; }
 .color-transport input[type=range] { flex: 1; accent-color: #ec4899; }
-.color-monitors { display: flex; gap: 12px; padding: 12px; flex: 0 0 auto; }
-.color-monitors figure { flex: 1; background: #0a060e; border-radius: 8px; overflow: hidden; border: 1px solid #3b1d4a; }
-.color-monitors figcaption { font-size: 11px; padding: 6px 10px; background: #1a0f1e; color: #f9a8d4; }
-.color-monitors canvas { width: 100%; height: auto; display: block; background: #000; }
-.color-lower { display: flex; flex: 1; min-height: 0; gap: 12px; padding: 0 12px 12px; }
-.color-controls { flex: 1; display: flex; flex-direction: column; background: rgba(20,10,25,0.7); border-radius: 10px; border: 1px solid #4c1d4d; overflow: hidden; }
-.color-controls header { display: flex; align-items: center; gap: 8px; padding: 8px; border-bottom: 1px solid #3b1d4a; }
-.color-controls header [role=tablist] button { padding: 4px 12px; border-radius: 6px; background: #2a152e; }
-.color-controls header [role=tablist] button[aria-selected=true] { background: #ec4899; color: #000; }
-.color-control-scroll { flex: 1; overflow: auto; padding: 12px; }
+.color-monitors { display: flex; gap: 12px; padding: 12px; flex: 0 0 auto; max-height: 42vh; }
+.color-monitors figure { flex: 1; background: #0a060e; border-radius: 8px; overflow: hidden; border: 1px solid #3b1d4a; display: flex; flex-direction: column; }
+.color-monitors canvas { width: 100%; height: auto; max-height: 36vh; object-fit: contain; display: block; background: #000; }
+.color-lower { display: flex; flex: 1; min-height: 280px; gap: 12px; padding: 0 12px 12px; overflow: hidden; }
+.color-controls { flex: 1; display: flex; flex-direction: column; background: rgba(20,10,25,0.7); border-radius: 10px; border: 1px solid #4c1d4d; overflow: hidden; min-height: 0; }
+.color-control-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 12px; }
 .color-wheels { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
 .color-wheel-group { text-align: center; }
 .color-wheel { width: 140px; height: 140px; margin: 8px auto; border-radius: 50%; background: conic-gradient(from 0deg, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00); position: relative; cursor: crosshair; border: 3px solid #1a0f1e; }
