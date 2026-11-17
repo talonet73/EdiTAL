@@ -1,3 +1,4 @@
+import {expandCompoundClips} from '../services/compoundClips';
 import {clipRate,SPEED_PERCENTAGES} from '../services/clipSpeed';
 import {AudioWaveform} from './AudioWaveform';
 import {DraggableWindow} from './DraggableWindow';
@@ -29,6 +30,7 @@ interface TimelineProps {
   selectedClipId: string | null;
   selectedClipIds?: string[];
   onJoinSelected?:()=>void;
+  onSelectClips?:(ids:string[])=>void;onSplitJoinedText?:(id:string)=>void;
   joining?:boolean;
   zoom: number; // pixels per second
   setZoom: (zoom: number) => void;
@@ -60,7 +62,7 @@ export const Timeline: React.FC<TimelineProps> = ({
   currentTime,
   totalDuration,
   selectedClipId,
-  selectedClipIds = [],onJoinSelected,joining=false,
+  selectedClipIds = [],onJoinSelected,onSelectClips,onSplitJoinedText,joining=false,
   zoom,
   setZoom,
   onSeek,
@@ -669,7 +671,7 @@ export const Timeline: React.FC<TimelineProps> = ({
                         onClick={e=>{e.stopPropagation();if(!e.shiftKey&&!e.ctrlKey&&!e.metaKey)onSelectClip(clip.id);}}
                         onMouseDown={e=>{if(e.button!==0)return;e.stopPropagation();if(e.shiftKey||e.ctrlKey||e.metaKey)onSelectClip(clip.id,true);else if(!isSelected)onSelectClip(clip.id);setDraggingClip({id:clip.id,startX:e.clientX,originalStartTime:clip.startTime});}}
                         onContextMenu={e=>{e.preventDefault();e.stopPropagation();if(!selectedClipIds.includes(clip.id))onSelectClip(clip.id);setContextMenu({x:e.clientX,y:e.clientY,clip});}}>
-                        <span className="text-xs font-bold whitespace-pre">{clip.text || clip.name}</span>
+                        {clip.segments&&expandCompoundClips([clip]).map(part=><div key={part.id} className="absolute top-0 bottom-0 bg-orange-300/60 border-x border-orange-800/60 pointer-events-none" style={{left:`${(part.startTime-clip.startTime)/clip.duration*100}%`,width:`${part.duration/clip.duration*100}%`}}/>)}<span className="relative text-xs font-bold whitespace-pre">{clip.text || clip.name}</span>
                         {(['start','end'] as const).map(edge=><div key={edge} data-handle={`trim-${edge}`} title={edge==='start'?"Trascina per accorciare o allungare dall'inizio":"Trascina per accorciare o allungare dalla fine"} className={`absolute top-0 bottom-0 w-2 cursor-ew-resize bg-black/20 hover:bg-white ${edge==='start'?'left-0':'right-0'}`} onMouseDown={e=>{e.stopPropagation();setTrimmingClip({id:clip.id,edge,startX:e.clientX,originalStartTime:clip.startTime,originalDuration:clip.duration,originalOffset:clip.offset || 0});}}/>)}
                       </div>;
                       // 1. EFFECTS TRACK (ROSSO)
@@ -1547,7 +1549,9 @@ export const Timeline: React.FC<TimelineProps> = ({
             </span>
           </div>
 
-          {onJoinSelected&&selectedClipIds.length>=2&&<button disabled={joining} onClick={()=>{onJoinSelected();setContextMenu(null);}} className="w-full px-2.5 py-2 text-left text-cyan-300">Unisci mattoncini selezionati</button>}
+          {contextMenu.clip.type==='text'&&onSelectClips&&<button onClick={()=>{onSelectClips(clips.filter(c=>c.type==='text'&&c.trackId===contextMenu.clip.trackId).map(c=>c.id));}} className="w-full px-2.5 py-2 rounded text-left hover:bg-slate-700 text-orange-200">Seleziona tutti i sottotitoli della pista</button>}
+          {onJoinSelected&&selectedClipIds.length>=2&&<button disabled={joining} onClick={()=>{onJoinSelected();setContextMenu(null);}} className="w-full px-2.5 py-2 text-left text-cyan-300">{contextMenu.clip.type==='text'?`UNISCI ${selectedClipIds.length} sottotitoli in un mattoncino`:'Unisci mattoncini selezionati'}</button>}
+          {contextMenu.clip.type==='text'&&contextMenu.clip.segments&&onSplitJoinedText&&<button onClick={()=>{onSplitJoinedText(contextMenu.clip.id);setContextMenu(null);}} className="w-full px-2.5 py-2 rounded text-left hover:bg-slate-700 text-orange-200">Separa i sottotitoli uniti</button>}
           <button onClick={()=>{setSpeedClip(contextMenu.clip);setSpeedLevel(contextMenu.clip.speedLevel ?? 0);setContextMenu(null);}} className="w-full px-2.5 py-2 rounded text-left hover:bg-slate-700 flex justify-between"><span>Velocità clip…</span><span>{Math.round(clipRate(contextMenu.clip)*100)}%</span></button>
           {(contextMenu.clip.type === 'video' || contextMenu.clip.type === 'audio') && (
             <>

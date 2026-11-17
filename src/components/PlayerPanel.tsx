@@ -60,7 +60,7 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({
   // Trascinamento sottotitoli sul monitor: posizione provvisoria durante il drag, salvata (una voce di cronologia) al rilascio.
   const [subtitleDrag,setSubtitleDrag]=useState<{id:string;x:number;y:number}|null>(null);
   const subtitleGrab=useRef<{id:string;dx:number;dy:number;moved:boolean}|null>(null);
-  const activeTextClips=clips.filter(c=>c.type==='text'&&c.text&&currentTime>=c.startTime&&currentTime<c.startTime+c.duration);
+  const activeTextClips=clips.filter(c=>c.type==='text'&&(c.text||c.segments)&&currentTime>=c.startTime&&currentTime<c.startTime+c.duration);
   const activeSubtitleClip=(selectedClip&&activeTextClips.find(c=>c.id===selectedClip.id))||activeTextClips[0];
 
   // Formatter for 00:01:22:15 style timecode
@@ -210,7 +210,7 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({
               const canvas=canvasRef.current,active=activeSubtitleClip; if(!canvas||!active||!onUpdateClip||penActive)return;
               e.preventDefault();canvas.setPointerCapture(e.pointerId);
               const rect=canvas.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width,y=(e.clientY-rect.top)/rect.height;
-              const startX=active.positionX??0.5,startY=active.positionY??0.85;
+              const first=active.segments?.[0],startX=active.positionX??first?.positionX??0.5,startY=active.positionY??first?.positionY??0.85;
               // Afferra il sottotitolo dove si clicca, senza farlo saltare sotto il cursore.
               subtitleGrab.current={id:active.id,dx:startX-x,dy:startY-y,moved:false};setSubtitleDrag({id:active.id,x:startX,y:startY});
             }}

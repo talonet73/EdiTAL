@@ -1,4 +1,4 @@
-import {joinSelectedClips,expandCompoundClips} from './services/compoundClips';
+import {joinSelectedClips,expandCompoundClips,splitJoinedText} from './services/compoundClips';
 import {validateCaptionClip} from './services/karaoke';
 import {FullscreenTools} from './components/FullscreenTools';
 import {SmartCutPanel} from './components/SmartCutPanel';
@@ -1105,6 +1105,8 @@ export default function App() {
           selectedClipId={selectedClipId}
           selectedClipIds={selectedClipIds}
           onJoinSelected={handleJoinSelected}
+          onSelectClips={ids=>{setSelectedClipIds(ids);setSelectedClipId(ids[0]??null);}}
+          onSplitJoinedText={id=>{try{const result=splitJoinedText(clips,id);setIsPlaying(false);setClips(result.clips);clipsRef.current=result.clips;pushHistory(result.clips);setSelectedClipIds(result.ids);setSelectedClipId(result.ids[0]??null);}catch(error){setTrackConstraintWarning((error as Error).message);}}}
           zoom={zoom}
           setZoom={setZoom}
           onSeek={t => setCurrentTime(t)}

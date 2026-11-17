@@ -17,6 +17,9 @@ export function expandCompoundClips(clips:TimelineClip[]):TimelineClip[]{
     transparency:segment.transparency*c.transparency/100,volumeDb:segment.volumeDb+c.volumeDb,
     effects:[...(segment.effects||[]),...(c.effects||[])],adjustments:{...segment.adjustments,...c.adjustments},colorGrade:c.colorGrade||segment.colorGrade,
     linkedClipId:segment.linkedClipId?`compound-linked:${segment.linkedClipId}`:undefined,
+    // Sottotitoli uniti: la posizione scelta sul monitor per il blocco vale per tutti i suoi sottotitoli.
+    ...(segment.type==='text'?{fadeIn:segment.fadeIn,fadeOut:segment.fadeOut}:{}),
+    ...(c.positionX!==undefined?{positionX:c.positionX}:{}),...(c.positionY!==undefined?{positionY:c.positionY}:{}),
    }];
   });
  }
@@ -25,7 +28,7 @@ export function expandCompoundClips(clips:TimelineClip[]):TimelineClip[]{
 /** One joined block per selected track, preserving timeline positions and gaps. */
 export function joinSelectedClips(clips:TimelineClip[],tracks:Track[],ids:string[]){
  const selected=new Set(ids),chosen=clips.filter(c=>selected.has(c.id));
- if(chosen.length!==selected.size||chosen.length<2||chosen.some(c=>!['video','audio'].includes(c.type)))throw new Error('Seleziona almeno due mattoncini video o audio.');
+ if(chosen.length!==selected.size||chosen.length<2||chosen.some(c=>!['video','audio','text'].includes(c.type)))throw new Error('Seleziona almeno due mattoncini video, audio o testo.');
  const groups=new Map<string,TimelineClip[]>();for(const c of chosen){if(!tracks.some(t=>t.id===c.trackId&&t.type===c.type))throw new Error('Pista della selezione non valida.');groups.set(c.trackId,[...(groups.get(c.trackId)||[]),c]);}
  const merged:TimelineClip[]=[],removed=new Set<string>(),members=new Map<string,Set<string>>();
  for(const [trackId,parts] of groups){
@@ -33,7 +36,8 @@ export function joinSelectedClips(clips:TimelineClip[],tracks:Track[],ids:string
   const start=Math.min(...parts.map(c=>c.startTime)),end=Math.max(...parts.map(c=>c.startTime+c.duration));
   if(clips.some(c=>c.trackId===trackId&&!selected.has(c.id)&&c.startTime<end-.0001&&c.startTime+c.duration>start+.0001))throw new Error('La selezione contiene mattoncini non selezionati tra i pezzi da unire. Selezionali oppure unisci un intervallo diverso.');
   const id=crypto.randomUUID();const segments=expandCompoundClips(parts).map(c=>({...c,startTime:c.startTime-start}));
-  merged.push({id,name:`Unione (${parts.length})`,type:parts[0].type,trackId,startTime:start,duration:end-start,offset:0,color:parts[0].color,transparency:100,volumeDb:0,fadeIn:0,fadeOut:0,segments});
+  const subtitleCount=parts[0].type==='text'?expandCompoundClips(parts).length:0;
+  merged.push({id,name:parts[0].type==='text'?`Sottotitoli uniti (${subtitleCount})`:`Unione (${parts.length})`,type:parts[0].type,trackId,startTime:start,duration:end-start,offset:0,color:parts[0].color,transparency:100,volumeDb:0,fadeIn:0,fadeOut:0,segments});
   members.set(id,new Set(parts.map(c=>c.id)));parts.forEach(c=>removed.add(c.id));
  }
  if(!merged.length)throw new Error('Seleziona almeno due mattoncini sulla stessa pista. Per collegare un solo video e un solo audio usa Collega video e audio.');
@@ -43,4 +47,10 @@ export function joinSelectedClips(clips:TimelineClip[],tracks:Track[],ids:string
  }
  const remaining=clips.filter(c=>!removed.has(c.id)).map(c=>c.linkedClipId&&removed.has(c.linkedClipId)?{...c,linkedClipId:undefined,isLinked:false,suppressEmbeddedAudio:c.type==='video'||c.suppressEmbeddedAudio}:c);
  return {clips:[...remaining,...merged],joinedIds:merged.map(c=>c.id)};
+}
+/** Separa un blocco di sottotitoli uniti nei singoli mattoncini, mantenendo tempi e posizione sul monitor. */
+export function splitJoinedText(clips:TimelineClip[],id:string){
+ const joined=clips.find(c=>c.id===id&&c.type==='text'&&c.segments);if(!joined)throw new Error('Seleziona un blocco di sottotitoli uniti.');
+ const parts=expandCompoundClips([joined]).map(c=>({...c,id:crypto.randomUUID(),fadeEnvelopes:undefined}));
+ return {clips:[...clips.filter(c=>c.id!==id),...parts],ids:parts.map(c=>c.id)};
 }
