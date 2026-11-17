@@ -43,7 +43,7 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({
   aspectRatio,
   setAspectRatio,
   clips,
-  subtitles,
+  subtitles: timelineSubtitleItems,
   isMuted,
   onToggleMute,
 }) => {
@@ -57,6 +57,11 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({
   useEffect(()=>{if(!screenRef.current)return;const observer=new ResizeObserver(entries=>{const {width,height}=entries[0].contentRect;setScreen({width,height});});observer.observe(screenRef.current);return()=>observer.disconnect();},[]);
   const ratio=aspectRatio==='9:16'?9/16:aspectRatio==='1:1'?1:aspectRatio==='4:3'?4/3:16/9;
   const fittedWidth=Math.max(1,Math.min(screen.width,screen.height*ratio));
+  // Trascinamento sottotitoli sul monitor: posizione provvisoria durante il drag, salvata (una voce di cronologia) al rilascio.
+  const [subtitleDrag,setSubtitleDrag]=useState<{id:string;x:number;y:number}|null>(null);
+  const subtitleGrab=useRef<{id:string;dx:number;dy:number;moved:boolean}|null>(null);
+  const activeTextClips=clips.filter(c=>c.type==='text'&&c.text&&currentTime>=c.startTime&&currentTime<c.startTime+c.duration);
+  const activeSubtitleClip=(selectedClip&&activeTextClips.find(c=>c.id===selectedClip.id))||activeTextClips[0];
 
   // Formatter for 00:01:22:15 style timecode
   const formatFullTimecode = (seconds: number) => {
@@ -66,6 +71,7 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({
     return `00:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}:${frames.toString().padStart(2, '0')}`;
   };
 
+  const subtitles=subtitleDrag?timelineSubtitleItems.map(sub=>sub.id===subtitleDrag.id?{...sub,positionX:subtitleDrag.x,positionY:subtitleDrag.y}:sub):timelineSubtitleItems;
   const expandedClips=expandCompoundClips(clips);
   // Convert timeline clips to engine formats
   const videoClips = expandedClips
@@ -199,22 +205,29 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({
         <div data-testid="player-frame" style={{width:fittedWidth,height:fittedWidth/ratio}} className="relative shrink-0 flex items-center justify-center shadow-2xl rounded border border-[#1e293b] bg-black overflow-hidden">
           <canvas data-testid="player-canvas"
             ref={canvasRef}
-            style={{width:'100%',height:'100%',cursor:'pointer'}}
+            style={{width:'100%',height:'100%',cursor:!penActive&&activeSubtitleClip&&onUpdateClip?(subtitleDrag?'grabbing':'move'):'pointer',touchAction:'none'}}
             onPointerDown={e=>{
-              const canvas=canvasRef.current; if(!canvas)return;
-              const rect=canvas.getBoundingClientRect();
-              const x=(e.clientX-rect.left)/rect.width;
-              const y=(e.clientY-rect.top)/rect.height;
-              // Snap to center if close
-              const snap=0.04;
-              const sx=Math.abs(x-0.5)<snap?0.5:x;
-              const sy=Math.abs(y-0.5)<snap?0.5:y;
-              // Update active subtitle position (first matching text clip at current time)
-              const active=clips.find(c=>c.type==='text' && currentTime>=c.startTime && currentTime<c.startTime+c.duration);
-              if(active && onUpdateClip){
-                onUpdateClip(active.id,{positionX:sx,positionY:sy});
-              }
+              const canvas=canvasRef.current,active=activeSubtitleClip; if(!canvas||!active||!onUpdateClip||penActive)return;
+              e.preventDefault();canvas.setPointerCapture(e.pointerId);
+              const rect=canvas.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width,y=(e.clientY-rect.top)/rect.height;
+              const startX=active.positionX??0.5,startY=active.positionY??0.85;
+              // Afferra il sottotitolo dove si clicca, senza farlo saltare sotto il cursore.
+              subtitleGrab.current={id:active.id,dx:startX-x,dy:startY-y,moved:false};setSubtitleDrag({id:active.id,x:startX,y:startY});
             }}
+            onPointerMove={e=>{
+              const canvas=canvasRef.current,grab=subtitleGrab.current; if(!canvas||!grab||!canvas.hasPointerCapture(e.pointerId))return;
+              const rect=canvas.getBoundingClientRect(),clamp=(n:number)=>Math.min(0.98,Math.max(0.02,n));
+              const x=clamp((e.clientX-rect.left)/rect.width+grab.dx),y=clamp((e.clientY-rect.top)/rect.height+grab.dy);
+              // Guide magnetiche invisibili: vicino al centro verticale/orizzontale scatta in posizione.
+              const snap=0.03;grab.moved=true;
+              setSubtitleDrag({id:grab.id,x:Math.abs(x-0.5)<snap?0.5:x,y:Math.abs(y-0.5)<snap?0.5:y});
+            }}
+            onPointerUp={e=>{
+              const grab=subtitleGrab.current,drag=subtitleDrag;subtitleGrab.current=null;setSubtitleDrag(null);
+              if(canvasRef.current?.hasPointerCapture(e.pointerId))canvasRef.current.releasePointerCapture(e.pointerId);
+              if(grab&&grab.moved&&drag&&drag.id===grab.id&&onUpdateClip)onUpdateClip(grab.id,{positionX:Number(drag.x.toFixed(4)),positionY:Number(drag.y.toFixed(4))});
+            }}
+            onLostPointerCapture={()=>{if(subtitleGrab.current){const grab=subtitleGrab.current,drag=subtitleDrag;subtitleGrab.current=null;setSubtitleDrag(null);if(grab.moved&&drag&&drag.id===grab.id&&onUpdateClip)onUpdateClip(grab.id,{positionX:Number(drag.x.toFixed(4)),positionY:Number(drag.y.toFixed(4))});}}}
             width={penActive?(aspectRatio==='9:16'?405:aspectRatio==='1:1'?720:aspectRatio==='4:3'?960:1280):aspectRatio === '9:16' ? 360 : aspectRatio === '1:1' ? 360 : aspectRatio === '4:3' ? 480 : 640}
             height={penActive?720:aspectRatio === '9:16' ? 640 : 360}
             className="w-full h-full object-contain"

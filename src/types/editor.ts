@@ -88,6 +88,8 @@ export interface MediaAsset {
 
 export interface SubtitleItem {
   words?:TimedWord[];
+  positionX?:number; // 0-1, centro orizzontale del sottotitolo (default centrato)
+  positionY?:number; // 0-1, centro verticale del sottotitolo (default in basso)
   style?:'classic'|'karaoke';
   fontFamily?:string;
   highlightColor?:string;

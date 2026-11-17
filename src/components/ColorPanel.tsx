@@ -1,7 +1,7 @@
 import React,{useEffect,useRef,useState} from 'react';
-import {Play,Pause,RotateCcw} from 'lucide-react';
+import {Play,Pause,RotateCcw,Palette,SlidersHorizontal,Spline,Power} from 'lucide-react';
 import type {TimelineClip} from '../types/editor';
-import {COLOR_CONTROLS,CURVE_X,curveValue,gradeValues,type ColorGrade,type ColorKey,type CurveChannel} from '../services/colorGrade';
+import {COLOR_CONTROLS,CURVE_X,curveValue,gradeValues,hasGrade,type ColorGrade,type ColorKey,type CurveChannel} from '../services/colorGrade';
 import {drawScope,scopeData} from '../services/colorScopes';
 import {playbackEngine} from '../services/playbackEngine';
 import {timelineSubtitles} from '../services/captionClips';
@@ -35,11 +35,17 @@ function Wheel({name,settings,onUpdate,disabled}:{name:'lift'|'gamma'|'gain'|'of
   </article>;
 }
 function Curves({settings,onUpdate,disabled}:{settings:ColorGrade;onUpdate:(s:ColorGrade)=>void;disabled:boolean}){
-  const [channel,setChannel]=useState<CurveChannel>('master');const points=settings.curves?.[channel]||[...CURVE_X];
+  const [channel,setChannel]=useState<CurveChannel>('master'),dragPoint=useRef<number|null>(null);const points=settings.curves?.[channel]||[...CURVE_X];
   const update=(index:number,value:number)=>{const next=[...points];next[index]=Math.max(0,Math.min(1,value));onUpdate({...settings,curves:{...settings.curves,[channel]:next},bypass:false});};
+  // Coordinate esatte nel sistema dell'SVG (anche quando il grafico è centrato con bande laterali).
+  const svgPoint=(e:React.PointerEvent<SVGSVGElement>)=>{const svg=e.currentTarget,pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const p=pt.matrixTransform(svg.getScreenCTM()!.inverse());return {x:p.x/400,y:1-p.y/200};};
   const path=Array.from({length:201},(_,i)=>`${i?'L':'M'}${i*2},${200-curveValue(i/200,points)*200}`).join(' ');
-  return <div className="color-curves"><label>Canale curva <select aria-label="Canale curva" value={channel} onChange={e=>setChannel(e.target.value as CurveChannel)}>{[['master','Master RGB'],['red','Rosso'],['green','Verde'],['blue','Blu']].map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></label>
-    <svg viewBox="-8 -8 416 224" aria-label="Curva personalizzata" role="img" className={`curve-${channel}`}><rect x="0" y="0" width="400" height="200" fill="#090c14"/>{[0,.25,.5,.75,1].map(v=><g key={v} stroke="#303747"><path d={`M${v*400} 0V200 M0 ${v*200}H400`}/></g>)}<path d="M0 200L400 0" stroke="#5b6475" strokeDasharray="4 4"/><path d={path} stroke="currentColor" strokeWidth="2" fill="none"/>{points.map((y,i)=><circle key={i} cx={CURVE_X[i]*400} cy={(1-y)*200} r="5" fill="currentColor" style={{cursor:disabled?'default':'ns-resize',touchAction:'none'}} onPointerDown={e=>{if(!disabled){e.currentTarget.setPointerCapture(e.pointerId);e.preventDefault();}}} onPointerMove={e=>{if(!disabled&&e.currentTarget.hasPointerCapture(e.pointerId)){const rect=e.currentTarget.ownerSVGElement!.getBoundingClientRect();update(i,1-((e.clientY-rect.top)/rect.height*224-8)/200);}}}/>)}</svg>
+  return <div className="color-curves"><div className="color-curve-channels" role="radiogroup" aria-label="Canale curva">{([['master','Master RGB'],['red','Rosso'],['green','Verde'],['blue','Blu']] as const).map(([v,l])=><button key={v} type="button" role="radio" aria-checked={channel===v} className={`curve-chip curve-chip-${v}`} onClick={()=>setChannel(v)}><i/>{l}</button>)}</div>
+    <svg viewBox="-8 -8 416 224" aria-label="Curva personalizzata" role="img" className={`curve-${channel}`} style={{touchAction:'none',cursor:'ns-resize'}}
+      onPointerDown={e=>{if(disabled)return;e.preventDefault();const {x,y}=svgPoint(e);let index=0;CURVE_X.forEach((cx,i)=>{if(Math.abs(cx-x)<Math.abs(CURVE_X[index]-x))index=i;});dragPoint.current=index;e.currentTarget.setPointerCapture(e.pointerId);update(index,y);}}
+      onPointerMove={e=>{if(dragPoint.current===null||!e.currentTarget.hasPointerCapture(e.pointerId))return;update(dragPoint.current,svgPoint(e).y);}}
+      onPointerUp={()=>{dragPoint.current=null;}} onLostPointerCapture={()=>{dragPoint.current=null;}}
+      onDoubleClick={()=>{if(!disabled)onUpdate({...settings,curves:{...settings.curves,[channel]:[...CURVE_X]}});}}><title>Trascina un punto su/giù; doppio clic per ripristinare la curva</title><rect x="0" y="0" width="400" height="200" fill="#090c14"/>{[0,.25,.5,.75,1].map(v=><g key={v} stroke="#303747"><path d={`M${v*400} 0V200 M0 ${v*200}H400`}/></g>)}<path d="M0 200L400 0" stroke="#5b6475" strokeDasharray="4 4"/><path d={path} stroke="currentColor" strokeWidth="2" fill="none"/>{points.map((y,i)=><circle key={i} cx={CURVE_X[i]*400} cy={(1-y)*200} r="6" fill="currentColor" stroke="#fff" strokeWidth="1.5"/>)}</svg>
     <div className="color-curve-points">{points.map((y,i)=><label key={i}>{Math.round(CURVE_X[i]*100)}%<input aria-label={`Curva ${channel} punto ${i+1}`} disabled={disabled} type="number" min="0" max="100" step="1" value={Math.round(y*100)} onChange={e=>{if(e.target.value!=='')update(i,Number(e.target.value)/100);}}/></label>)}</div>
     <button disabled={disabled} onClick={()=>onUpdate({...settings,curves:{...settings.curves,[channel]:[...CURVE_X]}})}>Ripristina curva {channel}</button>
   </div>;
@@ -48,8 +54,13 @@ interface Props {clips:TimelineClip[];selectedId:string|null;currentTime:number;
 export function ColorPanel({clips,selectedId,currentTime,duration,playing,aspectRatio,onSelect,onUpdate,onSeek,onPlay}:Props){
   const [tab,setTab]=useState('Ruote'),[scopeSource,setScopeSource]=useState<'before'|'after'>('after'),[error,setError]=useState(''),[stats,setStats]=useState({min:0,max:0,black:0,white:0});
   const before=useRef<HTMLCanvasElement>(null),after=useRef<HTMLCanvasElement>(null),scopeRefs=useRef<(HTMLCanvasElement|null)[]>([]),last=useRef(0);
-  const visual=clips.filter(c=>c.type==='video'||c.type==='image'),selected=visual.find(c=>c.id===selectedId),settings=selected?.colorGrade||{},values=gradeValues(settings);
-  const update=(s:ColorGrade)=>{if(selected)onUpdate(selected.id,s);};
+  const visual=clips.filter(c=>c.type==='video'||c.type==='image'),selected=visual.find(c=>c.id===selectedId);
+  // Controlli sempre attivi: clip selezionata, altrimenti la clip sotto la testina, altrimenti una bozza locale
+  // che viene applicata alla prima clip (senza correzione) che selezioni.
+  const [draft,setDraft]=useState<ColorGrade>({});
+  const target=selected||[...visual].reverse().find(c=>currentTime>=c.startTime&&currentTime<c.startTime+c.duration),settings=target?(target.colorGrade||{}):draft,values=gradeValues(settings);
+  const update=(s:ColorGrade)=>{if(target)onUpdate(target.id,s);else setDraft(s);};
+  useEffect(()=>{if(selected&&!hasGrade(selected.colorGrade)&&hasGrade(draft)){onUpdate(selected.id,draft);setDraft({});}},[selected?.id]);
   useEffect(()=>{
     let cancelled=false;const timestamp=performance.now();if(playing&&timestamp-last.current<90)return;last.current=timestamp;
     const render=async()=>{
@@ -69,8 +80,8 @@ export function ColorPanel({clips,selectedId,currentTime,duration,playing,aspect
     <header className="color-transport"><strong>COLOR</strong><button aria-label={playing?'Pausa COLOR':'Riproduci COLOR'} onClick={onPlay}>{playing?<Pause size={16}/>:<Play size={16}/>}</button><output>{currentTime.toFixed(2)} s</output><input aria-label="Posizione COLOR" type="range" min={0} max={duration} step="0.01" value={currentTime} onChange={e=>onSeek(Number(e.target.value))}/><select aria-label="Clip da correggere" value={selected?.id||''} onChange={e=>{const c=visual.find(c=>c.id===e.target.value);if(c){onSelect(c.id);if(currentTime<c.startTime||currentTime>=c.startTime+c.duration)onSeek(c.startTime);}}}><option value="">Seleziona una clip video o immagine</option>{visual.map(c=><option key={c.id} value={c.id}>{c.name} · {c.startTime.toFixed(2)} s</option>)}</select></header>
     {error&&<p role="alert">{error}</p>}
     <div className="color-monitors"><figure><figcaption>ORIGINALE · senza effetti</figcaption><canvas data-testid="color-original" ref={before}/></figure><figure><figcaption>CORRETTO · effetti applicati</figcaption><canvas data-testid="color-corrected" ref={after}/></figure></div>
-    <div className="color-lower"><div className="color-controls"><header><div role="tablist" aria-label="Controlli colore">{['Ruote','Primarie','Curve'].map(t=><button key={t} role="tab" aria-selected={tab===t} onClick={()=>setTab(t)}>{t}</button>)}</div><button disabled={!selected} aria-label="Bypass COLOR" aria-pressed={!!settings.bypass} onClick={()=>update({...settings,bypass:!settings.bypass})}>Bypass</button><button disabled={!selected} aria-label="Ripristina COLOR" onClick={()=>update({})}><RotateCcw size={13}/> Reset</button></header>
-      <p className="color-help">{selected?`Clip: ${selected.name} · trascina le manopole o modifica i valori`:'Seleziona una clip nella timeline o nel menu in alto per correggerla.'}</p>
+    <div className="color-lower"><div className="color-controls"><header><div role="tablist" aria-label="Controlli colore">{([['Ruote',Palette],['Primarie',SlidersHorizontal],['Curve',Spline]] as const).map(([t,Icon])=><button key={t} role="tab" className="color-tab-btn" aria-selected={tab===t} onClick={()=>setTab(t)}><Icon size={15}/><span>{t}</span></button>)}</div><div className="color-actions"><button className="color-action-btn" aria-label="Bypass COLOR" aria-pressed={!!settings.bypass} onClick={()=>update({...settings,bypass:!settings.bypass})}><Power size={13}/> Bypass</button><button className="color-action-btn" aria-label="Ripristina COLOR" onClick={()=>update({})}><RotateCcw size={13}/> Reset</button></div></header>
+      <p className="color-help">{target?`Clip${selected?'':' sotto la testina'}: ${target.name} · trascina ruote o manopole (su/giù) · doppio clic per resettare`:'Nessuna clip qui: le regolazioni restano in bozza e vanno sulla prima clip che selezioni · doppio clic per resettare'}</p>
       <div className="color-control-scroll">{tab==='Ruote'?<div className="color-wheels">{(['lift','gamma','gain','offset'] as const).map(name=><Wheel key={name} name={name} settings={settings} onUpdate={update} disabled={false}/>)}</div>:tab==='Primarie'?<div className="color-primary-knobs">{COLOR_CONTROLS.slice(0,13).map(c=><ColorKnob key={c[0]} control={c} value={values[c[0]]} disabled={false} onChange={value=>update({...settings,[c[0]]:value,bypass:false})}/>)}</div>:<Curves settings={settings} disabled={false} onUpdate={update}/>}</div>
     </div><aside className="color-scopes" aria-label="Scopes colore"><header><strong>SCOPES · SDR Rec.709</strong><select aria-label="Sorgente scopes" value={scopeSource} onChange={e=>setScopeSource(e.target.value as 'before'|'after')}><option value="after">Corretto</option><option value="before">Originale</option></select></header><div className="color-scope-grid">{['Waveform Y · 0–100 IRE','Parade RGB · 0–100 IRE','Istogramma RGB · 0–255','Vectorscope Cb/Cr'].map((label,i)=><figure key={label}><figcaption>{label}</figcaption><canvas data-testid={`scope-${i}`} aria-label={label} width="320" height="156" ref={el=>{scopeRefs.current[i]=el;}}/></figure>)}</div><p data-testid="scope-stats">Y {Math.round(stats.min/255*100)}–{Math.round(stats.max/255*100)} IRE · Neri {stats.black.toFixed(1)}% · Bianchi {stats.white.toFixed(1)}%</p><small>Misura del fotogramma visualizzato, gamma SDR a 8 bit, intervallo completo.</small></aside></div>
   </section>;

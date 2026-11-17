@@ -62,9 +62,12 @@ export interface ImageClipData extends Partial<VisualSettings> {
   mediaUrl?: string;
 }
 
+/** Font tra virgolette + ripieghi con glifi accentati: se il font scelto manca, il canvas non mostra simboli al posto di à è ì ò ù. */
+function canvasFontStack(font:string){return `"${font.replace(/["\\]/g,'')}", "Segoe UI", Arial, "Helvetica Neue", "DejaVu Sans", sans-serif`;}
 export interface SubtitleData {
   words?:TimedWord[];style?:'classic'|'karaoke';
   row?:number;transparency?:number;fadeIn?:number;fadeOut?:number;
+  fontFamily?:string;highlightColor?:string;wordSpacing?:number;lineSpacing?:number;positionX?:number;positionY?:number;
   text: string;
   startTime: number;
   endTime: number;
@@ -285,14 +288,14 @@ export class PlaybackEngine {
     }
     for(const subtitle of subtitles.filter(s=>time>=s.startTime && time<s.endTime)) {
       ctx.save();ctx.globalAlpha=clipAlpha({...subtitle,duration:subtitle.endTime-subtitle.startTime},time-subtitle.startTime);
-      if(subtitle.style==='karaoke'&&subtitle.words?.length){const layout=karaokeLayout({...subtitle,id:'preview'},width,height);const font=subtitle.fontFamily||'Arial';const ws=subtitle.wordSpacing??1;ctx.font=`bold ${layout.font}px ${font}`;ctx.textAlign='left';ctx.textBaseline='top';const hi=subtitle.highlightColor||'#087f8c';let x=layout.words[0]?.x??0;for(const word of layout.words){const w=ctx.measureText(word.text).width;if(time>=word.startTime&&time<word.endTime){ctx.fillStyle=hi;ctx.fillRect(x-4,word.y-4,w+8,layout.font+8);}ctx.fillStyle='white';ctx.fillText(word.text,x,word.y);x+=w+layout.font*0.25*ws;}ctx.restore();continue;}
+      if(subtitle.style==='karaoke'&&subtitle.words?.length){const layout=karaokeLayout({...subtitle,id:'preview'},width,height);const font=subtitle.fontFamily||'Arial';const ws=subtitle.wordSpacing??1;ctx.font=`bold ${layout.font}px ${canvasFontStack(font)}`;ctx.textAlign='left';ctx.textBaseline='top';const hi=subtitle.highlightColor||'#087f8c';let x=layout.words[0]?.x??0;if(Number.isFinite(subtitle.positionX)){const total=layout.words.reduce((n,word,i)=>n+ctx.measureText(word.text).width+(i?layout.font*0.25*ws:0),0);x=Math.max(4,Math.min(width-total-4,subtitle.positionX!*width-total/2));}for(const word of layout.words){const w=ctx.measureText(word.text).width;if(time>=word.startTime&&time<word.endTime){ctx.fillStyle=hi;ctx.fillRect(x-4,word.y-4,w+8,layout.font+8);}ctx.fillStyle='white';ctx.fillText(word.text,x,word.y);x+=w+layout.font*0.25*ws;}ctx.restore();continue;}
       const fontSize=Math.round(height/24),lines=subtitle.text.split('\n');
       const font=subtitle.fontFamily||'Arial';
       const ls=subtitle.lineSpacing??1;
       const ws=subtitle.wordSpacing??1;
-      const px=(subtitle as any).positionX ?? 0.5;
-      const py=(subtitle as any).positionY ?? 0.85;
-      ctx.font=`bold ${fontSize}px ${font}`;ctx.textAlign='center';
+      const px=subtitle.positionX ?? 0.5;
+      const py=subtitle.positionY ?? 0.85;
+      ctx.font=`bold ${fontSize}px ${canvasFontStack(font)}`;ctx.textAlign='center';
       const lineHeight=fontSize*(0.9+ls*0.3);
       const measured=lines.map(line=>{const words=line.split(/\s+/);let width=0;for(const w of words)width+=ctx.measureText(w).width;width+=Math.max(0,words.length-1)*fontSize*0.2*ws;return width;});
       const w=Math.min(width-20,Math.max(...measured)+16),h=lines.length*lineHeight;
